@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import Header from '../navigation/Header';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 
 // 참가자 타입 정의
 type Participant = {
@@ -38,6 +39,13 @@ const Home: React.FC = () => {
         { id: 10, name: "", gender: "여" },
       ],
     },
+    {
+      id: 3,
+      participants: [
+        { id: 1, name: "생명공학과", gender: "남" },
+        { id: 2, name: "바이오메디컬공학과", gender: "여" },
+      ]
+    },
   ]);
 
   const handleNotificationPress = () => {
@@ -45,8 +53,16 @@ const Home: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <LinearGradient
+        colors={['#FF53CC', '#F083FF', '#947CFF', '#F0F0E9', '#F0F0E9']}
+        locations={[0, 0.30, 0.47, 0.9, 1]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 0.5 }}
+        style={styles.container}
+        >
+
       <Header title="UniMeet" onNotificationPress={handleNotificationPress} />
+
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.comment}>
           <Ionicons name="rocket-outline" size={12} color="#3D3D3D" style={styles.icon} />
@@ -69,37 +85,52 @@ const Home: React.FC = () => {
               <Ionicons name="people-outline" size={24} color="#3D3D3D" />
             </View>
             <View style={styles.participantsContainer}>
-              {/* 남자 그룹 */}
-              <View style={styles.group}>
-                {room.participants
-                  .filter((participant) => participant.gender === "남")
-                  .map((participant) => (
+              {room.id === 3 ? (
+                // 혼성방: 모든 참가자를 주황색으로 표시
+                <View style={styles.group}>
+                  {room.participants.map((participant) => (
                     <View key={participant.id} style={styles.participantRow}>
-                      <Ionicons name="person" size={15} style={styles.male} />
-                      <Text style={[styles.participantText, styles.male]}>{participant.name}</Text>
+                      <Ionicons name="person" size={15} style={styles.mixed} />
+                      <Text style={[styles.participantText, styles.mixed]}>{participant.name}</Text>
                     </View>
                   ))}
-              </View>
-
-              {/* 세로선 */}
-              <View style={styles.divider}></View>
-
-              {/* 여자 그룹 */}
-              <View style={styles.group}>
-                {room.participants
-                  .filter((participant) => participant.gender === "여")
-                  .map((participant) => (
-                    <View key={participant.id} style={styles.participantRow}>
-                      <Ionicons name="person" size={15} style={styles.female} />
-                      <Text style={[styles.participantText, styles.female]}>{participant.name}</Text>
-                    </View>
-                  ))}
-              </View>
+                </View>
+              ) : (
+                <>
+                  {/* 남자 그룹 */}
+                  <View style={styles.group}>
+                    {room.participants
+                      .filter((participant) => participant.gender === "남")
+                      .map((participant) => (
+                        <View key={participant.id} style={styles.participantRow}>
+                          <Ionicons name="person" size={15} style={styles.male} />
+                          <Text style={[styles.participantText, styles.male]}>{participant.name}</Text>
+                        </View>
+                      ))}
+                  </View>
+                  {/* 세로선 */}
+                  <View style={styles.divider}></View>
+                  {/* 여자 그룹 */}
+                  <View style={styles.group}>
+                    {room.participants
+                      .filter((participant) => participant.gender === "여")
+                      .map((participant) => (
+                        <View key={participant.id} style={styles.participantRow}>
+                          <Ionicons name="person" size={15} style={styles.female} />
+                          <Text style={[styles.participantText, styles.female]}>{participant.name}</Text>
+                        </View>
+                      ))}
+                  </View>
+                </>
+              )}
             </View>
           </View>
         ))}
       </ScrollView>
-    </View>
+
+
+      
+    </LinearGradient>
   );
 };
 
@@ -133,7 +164,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#D1D0D0',
-    marginBottom: 15,
+    marginBottom: 40,
   },
   guideBoxText: {
     textAlign: 'center',
@@ -195,6 +226,10 @@ const styles = StyleSheet.create({
   },
   female: {
     color: '#d81b60',
+    marginRight: 5,
+  },
+  mixed: {
+    color: '#FF9800', // 주황색
     marginRight: 5,
   },
   participantText: {
