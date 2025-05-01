@@ -10,7 +10,7 @@ const Chat :React.FC = () => {
 
   return (
     <LinearGradient
-            colors={['#FF53CC', '#F083FF', '#947CFF', '#F0F0E9', '#F0F0E9']}
+            colors={['#FF7DD8', '#F083FF', '#947CFF', '#F0F0E9', '#F0F0E9']}
             locations={[0, 0.30, 0.47, 0.9, 1]}
             start={{ x: 0, y: 0 }}
             end={{ x: 0, y: 0.5 }}

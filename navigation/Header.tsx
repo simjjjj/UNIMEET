@@ -34,9 +34,9 @@ const styles = StyleSheet.create({
     flex: 1,
     left: 10,
     color: 'white',
-    textShadowColor: 'rgba(0,0,0,0.5)',
-    textShadowOffset: { width: 1, height: 3 },
-    textShadowRadius: 2,
+    textShadowColor: 'rgba(0,0,0,0.75)',
+    textShadowOffset: { width: 3, height: 2 },
+    textShadowRadius: 5,
   },
   notificationButton: {
     padding: 10,

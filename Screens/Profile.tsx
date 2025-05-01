@@ -11,7 +11,7 @@ const Profile :React.FC = () => {
   return (
 
     <LinearGradient
-            colors={['#FF53CC', '#F083FF', '#947CFF', '#F0F0E9', '#F0F0E9']}
+            colors={['#FF7DD8', '#F083FF', '#947CFF', '#F0F0E9', '#F0F0E9']}
             locations={[0, 0.30, 0.47, 0.9, 1]}
             start={{ x: 0, y: 0 }}
             end={{ x: 0, y: 0.5 }}
@@ -20,7 +20,7 @@ const Profile :React.FC = () => {
     
     <View style={styles.container}>
       {/* 헤더 */}
-      <Header title="프로필" onNotificationPress={handleNotificationPress} />
+      <Header title="마이페이지" onNotificationPress={handleNotificationPress} />
 
       <ScrollView contentContainerStyle={styles.content}>
         {/* 메인 콘텐츠 */}
