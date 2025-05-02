@@ -4,69 +4,90 @@ import Header from '../navigation/Header';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 
-const Profile :React.FC = () => {
+const Profile: React.FC = () => {
   const handleNotificationPress = () => {
     alert('프로필 화면에서 알림을 눌렀습니다!');
   };
 
+  const interests: string[] = ['#운동', '#축구', '#게임', '#음악', '#영화', '#드라마'];
+
   return (
-
     <LinearGradient
-            colors={['#FF7DD8', '#F083FF', '#947CFF', '#F0F0E9', '#F0F0E9']}
-            locations={[0, 0.30, 0.47, 0.9, 1]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 0, y: 0.5 }}
-            style={styles.container}
-            >
-    
-    <View style={styles.container}>
-      {/* 헤더 */}
-      <Header title="마이페이지" onNotificationPress={handleNotificationPress} />
+    colors={['#FF7DD8', '#F083FF', '#947CFF', '#F0F0E9', '#F0F0E9']}
+      locations={[0, 0.32, 0.57, 0.9, 1]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 0, y: 0.5 }}
+      style={styles.container}
+    >
+      <View style={styles.container}>
+        {/* 헤더 */}
+        <Header title="마이페이지" onNotificationPress={handleNotificationPress} />
 
-      <ScrollView contentContainerStyle={styles.content}>
-        <View style={styles.comment}>
+        <ScrollView contentContainerStyle={styles.content}>
+          <View style={styles.comment}>
             <Ionicons name="rocket-outline" size={12} color="#3D3D3D" style={styles.icon} />
-            <Text style={styles.commentText}>여기는 개발자 코멘트를 적는 곳.</Text>
-        </View>
-        <View style={styles.introduce}>
+            <Text style={styles.commentText}>프로필을 수정할 수 있는 공간입니다.</Text>
+          </View>
+          <View style={styles.introduce}>
             <Image source={require('../img/Profile.jpg')} style={styles.image} />
             <View style={styles.infoBox}>
-                <Text style={styles.label}>이름: <Text style={styles.value}>이동연</Text></Text>
-                <Text style={styles.label}>닉네임: <Text style={styles.value}>강아지똥</Text></Text>
-                <Text style={styles.label}>생년월일: <Text style={styles.value}>2001.01.23</Text></Text>
+              <Text style={styles.label}>
+                이름: <Text style={styles.value}>이동연</Text>
+              </Text>
+              <Text style={styles.label}>
+                닉네임: <Text style={styles.value}>강아지똥</Text>
+              </Text>
+              <Text style={styles.label}>
+                생년월일: <Text style={styles.value}>2001.01.23</Text>
+              </Text>
             </View>
-        </View>
-        <View style={styles.myInfo}>
+          </View>
+          <View style={styles.myInfo}>
             <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>학과</Text>
-                <Text style={styles.infoValue}>컴퓨터공학과</Text>
+              <Text style={styles.infoLabel}>학과</Text>
+              <Text style={styles.infoValue}>컴퓨터공학과</Text>
             </View>
             <View style={styles.underline} />
             <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>학번</Text>
-                <Text style={styles.infoValue}>20학번</Text>
+              <Text style={styles.infoLabel}>학번</Text>
+              <Text style={styles.infoValue}>20학번</Text>
             </View>
             <View style={styles.underline} />
             <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>나이</Text>
-                <Text style={styles.infoValue}>25</Text>
+              <Text style={styles.infoLabel}>나이</Text>
+              <Text style={styles.infoValue}>25</Text>
             </View>
             <View style={styles.underline} />
             <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>키</Text>
-                <Text style={styles.infoValue}>175cm</Text>
+              <Text style={styles.infoLabel}>키</Text>
+              <Text style={styles.infoValue}>175cm</Text>
             </View>
             <View style={styles.underline} />
             <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>전화번호</Text>
-                <Text style={styles.infoValue}>010-3200-1951</Text>
+              <Text style={styles.infoLabel}>전화번호</Text>
+              <Text style={styles.infoValue}>010-3200-1951</Text>
             </View>
-        </View>
-      </ScrollView>
-    </View>
-
+          </View>
+          <View style={styles.interests}>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoIsLabel}>MBTI</Text>
+              <Text style={styles.infoMBTI}>ESTP</Text>
+            </View>
+            <View style={styles.underline} />
+            <View style={[styles.infoRow, { alignItems: 'flex-start' }]}>
+              <Text style={styles.infoIsLabel}>관심사</Text>
+              <View style={styles.interestTags}>
+                {interests.map((item, idx) => (
+                  <Text key={idx} style={styles.infoInterest}>
+                    {item}
+                  </Text>
+                ))}
+              </View>
+            </View>
+          </View>
+        </ScrollView>
+      </View>
     </LinearGradient>
-    
   );
 };
 
@@ -75,7 +96,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    flex: 1,
+    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -87,6 +108,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
+    marginBottom: 10,
   },
   commentText: {
     fontSize: 11,
@@ -96,6 +118,7 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   introduce: {
+    width: '90%',
     flexDirection: 'row',
     alignItems: 'center',
     padding: 20,
@@ -105,7 +128,8 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 5,
-    margin: 20,
+    marginTop: 10,
+    marginBottom: 10,
   },
   image: {
     width: 100,
@@ -135,20 +159,17 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
     padding: 30,
+    marginBottom: 10,
   },
-  
   infoRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 15,
   },
-  
   infoLabel: {
     fontSize: 16,
     fontWeight: '600',
     color: '#333',
   },
-  
   infoValue: {
     fontSize: 16,
     color: '#555',
@@ -158,7 +179,62 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
     marginVertical: 1,
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  interests: {
+    width: '90%',
+    backgroundColor: '#f9f9f9',
+    borderRadius: 12,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    padding: 20,
     marginBottom: 20,
+  },
+  infoIsLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+    padding: 5,
+    minWidth: 60,
+  },
+  infoMBTI: {
+    fontSize: 16,
+    color: '#555',
+    backgroundColor: 'pink',
+    paddingTop: 5,
+    paddingBottom: 5,
+    paddingLeft: 10,
+    paddingRight: 10,
+    borderRadius: 15,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    marginLeft: 10,
+    marginRight: 100,
+  },
+  interestTags: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    maxWidth: '75%',
+    marginLeft: 8,
+  },
+  infoInterest: {
+    fontSize: 14,
+    color: '#FFFFFF',
+    backgroundColor: 'grey',
+    paddingTop: 5,
+    paddingBottom: 5,
+    paddingLeft: 10,
+    paddingRight: 10,
+    borderRadius: 15,
+    marginRight: 10,
+    marginBottom: 10,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
   },
 });
 
