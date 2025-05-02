@@ -69,7 +69,7 @@ const Profile: React.FC = () => {
             </View>
           </View>
           <View style={styles.interests}>
-            <View style={styles.infoRow}>
+            <View style={[styles.infoRow, { alignItems: 'flex-start' }]}>
               <Text style={styles.infoIsLabel}>MBTI</Text>
               <Text style={styles.infoMBTI}>ESTP</Text>
             </View>
@@ -77,8 +77,8 @@ const Profile: React.FC = () => {
             <View style={[styles.infoRow, { alignItems: 'flex-start' }]}>
               <Text style={styles.infoIsLabel}>관심사</Text>
               <View style={styles.interestTags}>
-                {interests.map((item, idx) => (
-                  <Text key={idx} style={styles.infoInterest}>
+                {interests.map((item, i) => (
+                  <Text key={i} style={styles.infoInterest}>
                     {item}
                   </Text>
                 ))}
@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 5,
-    padding: 30,
+    padding: 20,
     marginBottom: 10,
   },
   infoRow: {
@@ -169,18 +169,22 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: '#333',
+    marginLeft: 10,
+    width: 180,
   },
   infoValue: {
     fontSize: 16,
     color: '#555',
+    textAlign: 'left',
+    flex: 1,
   },
   underline: {
     width: '100%',
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
     marginVertical: 1,
-    marginTop: 10,
-    marginBottom: 10,
+    marginTop: 15,
+    marginBottom: 15,
   },
   interests: {
     width: '90%',
@@ -197,22 +201,21 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: '#333',
-    padding: 5,
-    minWidth: 60,
+    padding: 3,
   },
   infoMBTI: {
-    fontSize: 16,
+    fontSize: 14,
+    fontWeight: '600',
     color: '#555',
-    backgroundColor: 'pink',
+    backgroundColor: 'skyblue',
     paddingTop: 5,
     paddingBottom: 5,
     paddingLeft: 10,
     paddingRight: 10,
-    borderRadius: 15,
+    borderRadius: 10,
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 5,
-    marginLeft: 10,
     marginRight: 100,
   },
   interestTags: {
@@ -222,13 +225,13 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   infoInterest: {
-    fontSize: 14,
+    fontSize: 12,
     color: '#FFFFFF',
     backgroundColor: 'grey',
-    paddingTop: 5,
-    paddingBottom: 5,
-    paddingLeft: 10,
-    paddingRight: 10,
+    paddingTop: 7,
+    paddingBottom: 7,
+    paddingLeft: 12,
+    paddingRight: 12,
     borderRadius: 15,
     marginRight: 10,
     marginBottom: 10,
