@@ -11,10 +11,10 @@ const Meeting :React.FC = () => {
   return (
 
     <LinearGradient
-        colors={['#FF7DD8', '#F083FF', '#947CFF', '#F0F0E9', '#F0F0E9']}
-        locations={[0, 0.30, 0.47, 0.9, 1]}
+        colors={['#FF87DD', '#B092FF', '#DBD6EC', '#F0F0E9']}
+        locations={[0, 0.43, 0.71, 0.93]}
         start={{ x: 0, y: 0 }}
-        end={{ x: 0, y: 0.5 }}
+        end={{ x: 0, y: 0.35 }}
         style={styles.container}
         >
         

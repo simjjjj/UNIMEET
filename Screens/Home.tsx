@@ -54,8 +54,8 @@ const Home: React.FC = () => {
 
   return (
     <LinearGradient
-        colors={['#FF7DD8', '#F083FF', '#947CFF', '#F0F0E9', '#F0F0E9']}
-        locations={[0, 0.30, 0.47, 0.9, 1]}
+        colors={['#FFB1E8', '#EC75FF', '#947CFF', '#F0F0E9', '#F0F0E9']}
+        locations={[0, 0.28, 0.54, 0.9, 1]}
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 0.5 }}
         style={styles.container}
