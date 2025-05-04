@@ -21,13 +21,19 @@ const Profile: React.FC = () => {
     >
       <View style={styles.container}>
         {/* 헤더 */}
-        <Header title="마이페이지" onNotificationPress={handleNotificationPress} />
+        <Header
+            title="마이페이지"
+            onNotificationPress={handleNotificationPress}
+            iconName="settings-outline"
+        />
+
 
         <ScrollView contentContainerStyle={styles.content}>
           <View style={styles.comment}>
             <Ionicons name="rocket-outline" size={12} color="#3D3D3D" style={styles.icon} />
             <Text style={styles.commentText}>프로필을 수정할 수 있는 공간입니다.</Text>
           </View>
+
           <View style={styles.introduce}>
             <Image source={require('../img/Profile.jpg')} style={styles.image} />
             <View style={styles.infoBox}>
@@ -42,6 +48,7 @@ const Profile: React.FC = () => {
               </Text>
             </View>
           </View>
+
           <View style={styles.myInfo}>
             <View style={styles.infoRow}>
               <Text style={styles.infoLabel}>학과</Text>
@@ -68,12 +75,14 @@ const Profile: React.FC = () => {
               <Text style={styles.infoValue}>010-3200-1951</Text>
             </View>
           </View>
+
           <View style={styles.interests}>
             <View style={[styles.infoRow, { alignItems: 'flex-start' }]}>
               <Text style={styles.infoIsLabel}>MBTI</Text>
               <Text style={styles.infoMBTI}>ESTP</Text>
             </View>
-            <View style={styles.underline} />
+
+          <View style={styles.underline} />
             <View style={[styles.infoRow, { alignItems: 'flex-start' }]}>
               <Text style={styles.infoIsLabel}>관심사</Text>
               <View style={styles.interestTags}>
@@ -85,6 +94,11 @@ const Profile: React.FC = () => {
               </View>
             </View>
           </View>
+
+          <View>
+            <Text>로그아웃 | 회원탈퇴</Text>
+          </View>
+
         </ScrollView>
       </View>
     </LinearGradient>

@@ -7,16 +7,23 @@ interface HeaderProps {
   onNotificationPress: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ title, onNotificationPress }) => {
-  return (
-    <View style={styles.header}>
-      <Text style={styles.title}>{title}</Text>
-      <TouchableOpacity style={styles.notificationButton} onPress={onNotificationPress}>
-        <Ionicons name="notifications-outline" size={22} color="#000" />
-      </TouchableOpacity>
-    </View>
-  );
-};
+interface HeaderProps {
+    title: string;
+    onNotificationPress: () => void;
+    iconName?: string; // 아이콘 이름을 선택적으로 받음
+  }
+  
+  const Header: React.FC<HeaderProps> = ({ title, onNotificationPress, iconName = "notifications-outline" }) => {
+    return (
+      <View style={styles.header}>
+        <Text style={styles.title}>{title}</Text>
+        <TouchableOpacity style={styles.notificationButton} onPress={onNotificationPress}>
+        <Ionicons name={iconName as any} size={22} color="#000" />
+        </TouchableOpacity>
+      </View>
+    );
+  };
+  
 
 const styles = StyleSheet.create({
   header: {
@@ -30,7 +37,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: '500',
     flex: 1,
     left: 10,
     color: 'white',
