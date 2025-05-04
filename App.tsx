@@ -3,12 +3,13 @@ import { StyleSheet, Text, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
 import Bottom from './navigation/Bottom';
+import RootStack from './navigation/RootStack';
 
 export default function App() :React.JSX.Element {
   return (
     <SafeAreaProvider>
       <NavigationContainer>
-        <Bottom />
+        <RootStack />
       </NavigationContainer>
     </SafeAreaProvider>
   );

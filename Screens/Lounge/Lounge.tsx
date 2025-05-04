@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import Header from '../navigation/Header';
+import Header from '../../navigation/Header';
 import { LinearGradient } from 'expo-linear-gradient';
 
 const Lounge: React.FC = () => {

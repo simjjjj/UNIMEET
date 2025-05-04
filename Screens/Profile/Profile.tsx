@@ -1,15 +1,33 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
-import Header from '../navigation/Header';
+import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native';
+import Header from '../../navigation/Header';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import type { RootStackParamList } from '../../navigation/types';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 const Profile: React.FC = () => {
   const handleNotificationPress = () => {
     alert('프로필 화면에서 알림을 눌렀습니다!');
   };
 
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
   const interests: string[] = ['#운동', '#축구', '#게임', '#음악', '#영화', '#드라마'];
+
+  const myInfoList: {
+    label: string;
+    value: string;
+        }[] = [
+        { label: '나의 친구 목록', value: '0명'},
+        { label: '학과', value: '컴퓨터공학과' },
+        { label: '학번', value: '20학번' },
+        { label: '나이', value: '25' },
+        { label: '키', value: '175cm' },
+        { label: '전화번호', value: '010-3200-1951' },
+  ];
+  
 
   return (
     <LinearGradient
@@ -29,13 +47,9 @@ const Profile: React.FC = () => {
 
 
         <ScrollView contentContainerStyle={styles.content}>
-          <View style={styles.comment}>
-            <Ionicons name="rocket-outline" size={12} color="#3D3D3D" style={styles.icon} />
-            <Text style={styles.commentText}>프로필을 수정할 수 있는 공간입니다.</Text>
-          </View>
 
           <View style={styles.introduce}>
-            <Image source={require('../img/Profile.jpg')} style={styles.image} />
+            <Image source={require('../../img/Profile.jpg')} style={styles.image} />
             <View style={styles.infoBox}>
               <Text style={styles.label}>
                 이름: <Text style={styles.value}>이동연</Text>
@@ -46,34 +60,23 @@ const Profile: React.FC = () => {
               <Text style={styles.label}>
                 생년월일: <Text style={styles.value}>2001.01.23</Text>
               </Text>
+              <TouchableOpacity onPress={() => navigation.navigate('ProfileDetail')}>
+                <Text>나의 프로필 보기</Text>
+              </TouchableOpacity>
             </View>
           </View>
 
           <View style={styles.myInfo}>
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>학과</Text>
-              <Text style={styles.infoValue}>컴퓨터공학과</Text>
-            </View>
-            <View style={styles.underline} />
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>학번</Text>
-              <Text style={styles.infoValue}>20학번</Text>
-            </View>
-            <View style={styles.underline} />
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>나이</Text>
-              <Text style={styles.infoValue}>25</Text>
-            </View>
-            <View style={styles.underline} />
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>키</Text>
-              <Text style={styles.infoValue}>175cm</Text>
-            </View>
-            <View style={styles.underline} />
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>전화번호</Text>
-              <Text style={styles.infoValue}>010-3200-1951</Text>
-            </View>
+            {myInfoList.map((item, idx) => (
+                <React.Fragment key={item.label}>
+                <View style={styles.infoRow}>
+                    <Text style={styles.infoLabel}>{item.label}</Text>
+                    <Text style={styles.infoValue}>{item.value}</Text>
+                </View>
+                {/* 마지막 줄에는 밑줄을 그리지 않으려면 아래 조건 추가 */}
+                {idx < myInfoList.length - 1 && <View style={styles.underline} />}
+                </React.Fragment>
+            ))}
           </View>
 
           <View style={styles.interests}>
@@ -114,20 +117,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  comment: {
-    width: '90%',
-    height: 30,
-    backgroundColor: '#D1D0D0',
-    borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'row',
-    marginBottom: 10,
-  },
-  commentText: {
-    fontSize: 11,
-    color: '#3D3D3D',
-  },
   icon: {
     marginRight: 5,
   },
@@ -142,7 +131,6 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 5,
-    marginTop: 10,
     marginBottom: 10,
   },
   image: {

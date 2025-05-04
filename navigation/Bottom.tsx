@@ -1,10 +1,10 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Home from '../Screens/Home';
-import Meeting from '../Screens/Meeting';
-import Chat from '../Screens/Chat';
-import Lounge from '../Screens/Lounge';
-import Profile from '../Screens/Profile';
+import Home from '../Screens/Home/Home';
+import Meeting from '../Screens/Meeting/Meeting';
+import Chat from '../Screens/Chat/Chat';
+import Lounge from '../Screens/Lounge/Lounge';
+import Profile from '../Screens/Profile/Profile';
 import { Ionicons } from '@expo/vector-icons';
 
 const Tab = createBottomTabNavigator();
