@@ -21,8 +21,8 @@ const Profile: React.FC = () => {
     value: string;
         }[] = [
         { label: '나의 친구 목록', value: '0명'},
-        { label: '학과', value: '컴퓨터공학과' },
-        { label: '학번', value: '20학번' },
+        { label: '보유 콩', value: '0개' },
+        { label: '내가 쓴 게시글', value: '0개' },
         { label: '나이', value: '25' },
         { label: '키', value: '175cm' },
         { label: '전화번호', value: '010-3200-1951' },
@@ -61,7 +61,7 @@ const Profile: React.FC = () => {
                 생년월일: <Text style={styles.value}>2001.01.23</Text>
               </Text>
               <TouchableOpacity onPress={() => navigation.navigate('ProfileDetail')}>
-                <Text>나의 프로필 보기</Text>
+                <Text style={styles.goProfile}>나의 프로필 보기</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -241,6 +241,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
   },
+  goProfile: {
+    textDecorationLine: 'underline',
+  }
 });
 
 export default Profile;
