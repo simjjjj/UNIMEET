@@ -4,26 +4,26 @@ import Header from '../../navigation/Header';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store';
 import type { RootStackParamList } from '../../navigation/types';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 const Profile: React.FC = () => {
-
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const profile = useSelector((state: RootState) => state.profile);
 
   const handleSettingsPress = () => {
     navigation.navigate('Settings');
   };
 
-  const interests: string[] = ['#운동', '#축구', '#게임', '#음악', '#영화', '#드라마'];
-
   const myInfoList = [
-    { label: '보유 콩', value: '0개', onPress: () => alert('보유 콩 상세로 이동') },
-    { label: '나의 친구 목록', value: '0명', onPress: () => alert('친구 목록으로 이동') },
-    { label: '내가 쓴 게시글', value: '0개', onPress: () => alert('게시글로 이동') },
-    { label: '내가 쓴 댓글', value: '0개', onPress: () => alert('댓글로 이동') },
-    { label: '매칭 성공 수', value: '2회', onPress: () => alert('매칭 내역으로 이동') },
-    { label: '학교 인증', value: '완료됨', onPress: () => alert('학교 인증 정보로 이동') },
+    { label: '보유 콩', value: profile.beans, onPress: () => alert('보유 콩 상세로 이동') },
+    { label: '나의 친구 목록', value: profile.friends, onPress: () => alert('친구 목록으로 이동') },
+    { label: '내가 쓴 게시글', value: profile.posts, onPress: () => alert('게시글로 이동') },
+    { label: '내가 쓴 댓글', value: profile.comments, onPress: () => alert('댓글로 이동') },
+    { label: '매칭 성공 수', value: profile.matchings, onPress: () => alert('매칭 내역으로 이동') },
+    { label: '학교 인증', value: profile.verified, onPress: () => alert('학교 인증 정보로 이동') },
   ];  
 
   return (
@@ -35,7 +35,6 @@ const Profile: React.FC = () => {
       style={styles.container}
     >
       <View style={styles.container}>
-        {/* 헤더 */}
         <Header
           title="마이페이지"
           onNotificationPress={handleSettingsPress}
@@ -47,13 +46,13 @@ const Profile: React.FC = () => {
             <Image source={require('../../img/Profile.jpg')} style={styles.image} />
             <View style={styles.infoBox}>
               <Text style={styles.label}>
-                이름: <Text style={styles.value}>이동연</Text>
+                이름: <Text style={styles.value}>{profile.name}</Text>
               </Text>
               <Text style={styles.label}>
-                닉네임: <Text style={styles.value}>강아지똥</Text>
+                닉네임: <Text style={styles.value}>{profile.nickname}</Text>
               </Text>
               <Text style={styles.label}>
-                생년월일: <Text style={styles.value}>2001.01.23</Text>
+                생년월일: <Text style={styles.value}>{profile.birth}</Text>
               </Text>
               <TouchableOpacity onPress={() => navigation.navigate('ProfileDetail')}>
                 <Text style={styles.goProfile}>나의 프로필 보기</Text>
@@ -93,13 +92,13 @@ const Profile: React.FC = () => {
           <View style={styles.interests}>
             <View style={[styles.infoRow, { alignItems: 'flex-start' }]}>
               <Text style={styles.infoIsLabel}>MBTI</Text>
-              <Text style={styles.infoMBTI}>ESTP</Text>
+              <Text style={styles.infoMBTI}>{profile.mbti}</Text>
             </View>
             <View style={styles.underline} />
             <View style={[styles.infoRow, { alignItems: 'flex-start' }]}>
               <Text style={styles.infoIsLabel}>관심사</Text>
               <View style={styles.interestTags}>
-                {interests.map((item, i) => (
+                {profile.interests.map((item, i) => (
                   <Text key={i} style={styles.infoInterest}>
                     {item}
                   </Text>

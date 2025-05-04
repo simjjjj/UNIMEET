@@ -3,22 +3,23 @@ import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from 'rea
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store';
 
 const ProfileDetail: React.FC = () => {
   const navigation = useNavigation();
-
-  const interests: string[] = ['#운동', '#축구', '#게임', '#음악', '#영화', '#드라마'];
+  const profile = useSelector((state: RootState) => state.profile);
 
   const myInfoList = [
-    { label: '이름', value: '이동연' },
-    { label: '닉네임', value: '강아지똥' },
-    { label: '생년월일', value: '2001.01.23' },
-    { label: '학과', value: '컴퓨터공학과' },
-    { label: '학번', value: '20학번' },
-    { label: '나이', value: '25' },
-    { label: '키', value: '175cm' },
-    { label: '전화번호', value: '010-3200-1951' },
-    { label: '가입일', value: '2025.01.02' },
+    { label: '이름', value: profile.name },
+    { label: '닉네임', value: profile.nickname },
+    { label: '생년월일', value: profile.birth },
+    { label: '학과', value: profile.department },
+    { label: '학번', value: profile.studentId },
+    { label: '나이', value: profile.age },
+    { label: '키', value: profile.height },
+    { label: '전화번호', value: profile.phone },
+    { label: '가입일', value: profile.joinDate },
   ];
 
   return (
@@ -29,7 +30,6 @@ const ProfileDetail: React.FC = () => {
       end={{ x: 0, y: 0.35 }}
       style={styles.container}
     >
-      {/* 헤더 */}
       <View style={styles.headerRow}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.sideButton}>
           <Ionicons name="arrow-back" size={28} color="#fff" />
@@ -60,20 +60,20 @@ const ProfileDetail: React.FC = () => {
         <View style={styles.interests}>
           <View style={[styles.infoRow, { alignItems: 'flex-start' }]}>
             <Text style={styles.infoIsLabel}>MBTI</Text>
-            <Text style={styles.infoMBTI}>ESTP</Text>
+            <Text style={styles.infoMBTI}>{profile.mbti}</Text>
           </View>
 
           <View style={styles.underline} />
             <View style={[styles.infoRow, { alignItems: 'flex-start' }]}>
                 <Text style={styles.infoIsLabel}>관심사</Text>
                 <View style={styles.interestTags}>
-                  {interests.map((item, i) => (
+                  {profile.interests.map((item, i) => (
                     <Text key={i} style={styles.infoInterest}>
                       {item}
-                  </Text>
-                ))}
+                    </Text>
+                  ))}
+                </View>
             </View>
-          </View>
         </View>
       </ScrollView>
     </LinearGradient>
