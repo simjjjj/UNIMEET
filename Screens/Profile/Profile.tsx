@@ -8,30 +8,27 @@ import type { RootStackParamList } from '../../navigation/types';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 const Profile: React.FC = () => {
-  const handleNotificationPress = () => {
-    alert('프로필 화면에서 알림을 눌렀습니다!');
-  };
 
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
+  const handleSettingsPress = () => {
+    navigation.navigate('Settings');
+  };
+
   const interests: string[] = ['#운동', '#축구', '#게임', '#음악', '#영화', '#드라마'];
 
-  const myInfoList: {
-    label: string;
-    value: string;
-        }[] = [
-        { label: '나의 친구 목록', value: '0명'},
-        { label: '보유 콩', value: '0개' },
-        { label: '내가 쓴 게시글', value: '0개' },
-        { label: '나이', value: '25' },
-        { label: '키', value: '175cm' },
-        { label: '전화번호', value: '010-3200-1951' },
-  ];
-  
+  const myInfoList = [
+    { label: '보유 콩', value: '0개', onPress: () => alert('보유 콩 상세로 이동') },
+    { label: '나의 친구 목록', value: '0명', onPress: () => alert('친구 목록으로 이동') },
+    { label: '내가 쓴 게시글', value: '0개', onPress: () => alert('게시글로 이동') },
+    { label: '내가 쓴 댓글', value: '0개', onPress: () => alert('댓글로 이동') },
+    { label: '매칭 성공 수', value: '2회', onPress: () => alert('매칭 내역으로 이동') },
+    { label: '학교 인증', value: '완료됨', onPress: () => alert('학교 인증 정보로 이동') },
+  ];  
 
   return (
     <LinearGradient
-    colors={['#FF87DD', '#B092FF', '#DBD6EC', '#F0F0E9']}
+      colors={['#FF87DD', '#B092FF', '#DBD6EC', '#F0F0E9']}
       locations={[0, 0.43, 0.71, 0.93]}
       start={{ x: 0, y: 0 }}
       end={{ x: 0, y: 0.35 }}
@@ -40,14 +37,12 @@ const Profile: React.FC = () => {
       <View style={styles.container}>
         {/* 헤더 */}
         <Header
-            title="마이페이지"
-            onNotificationPress={handleNotificationPress}
-            iconName="settings-outline"
+          title="마이페이지"
+          onNotificationPress={handleSettingsPress}
+          iconName="settings-outline"
         />
 
-
         <ScrollView contentContainerStyle={styles.content}>
-
           <View style={styles.introduce}>
             <Image source={require('../../img/Profile.jpg')} style={styles.image} />
             <View style={styles.infoBox}>
@@ -67,16 +62,32 @@ const Profile: React.FC = () => {
           </View>
 
           <View style={styles.myInfo}>
-            {myInfoList.map((item, idx) => (
-                <React.Fragment key={item.label}>
+            {myInfoList.map((item, idx) => {
+              const isPressable = !!item.onPress;
+              const rowContent = (
                 <View style={styles.infoRow}>
-                    <Text style={styles.infoLabel}>{item.label}</Text>
+                  <Text style={styles.infoLabel}>{item.label}</Text>
+                  <View style={styles.infoValueRight}>
                     <Text style={styles.infoValue}>{item.value}</Text>
+                    {isPressable && (
+                      <Ionicons name="chevron-forward" size={20} color="#bbb" style={{ marginLeft: 8 }} />
+                    )}
+                  </View>
                 </View>
-                {/* 마지막 줄에는 밑줄을 그리지 않으려면 아래 조건 추가 */}
-                {idx < myInfoList.length - 1 && <View style={styles.underline} />}
+              );
+              return (
+                <React.Fragment key={item.label}>
+                  {isPressable ? (
+                    <TouchableOpacity onPress={item.onPress} activeOpacity={0.7}>
+                      {rowContent}
+                    </TouchableOpacity>
+                  ) : (
+                    rowContent
+                  )}
+                  {idx < myInfoList.length - 1 && <View style={styles.underline} />}
                 </React.Fragment>
-            ))}
+              );
+            })}
           </View>
 
           <View style={styles.interests}>
@@ -84,8 +95,7 @@ const Profile: React.FC = () => {
               <Text style={styles.infoIsLabel}>MBTI</Text>
               <Text style={styles.infoMBTI}>ESTP</Text>
             </View>
-
-          <View style={styles.underline} />
+            <View style={styles.underline} />
             <View style={[styles.infoRow, { alignItems: 'flex-start' }]}>
               <Text style={styles.infoIsLabel}>관심사</Text>
               <View style={styles.interestTags}>
@@ -97,11 +107,6 @@ const Profile: React.FC = () => {
               </View>
             </View>
           </View>
-
-          <View>
-            <Text>로그아웃 | 회원탈퇴</Text>
-          </View>
-
         </ScrollView>
       </View>
     </LinearGradient>
@@ -172,7 +177,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#333',
     marginLeft: 10,
-    width: 180,
+    width: 230,
   },
   infoValue: {
     fontSize: 16,
@@ -243,7 +248,35 @@ const styles = StyleSheet.create({
   },
   goProfile: {
     textDecorationLine: 'underline',
-  }
+  },
+  menuBox: {
+    width: '90%',
+    marginTop: 10,
+    marginBottom: 10,
+    backgroundColor: '#f9f9f9',
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  menuRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 18,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  menuLabel: {
+    fontSize: 16,
+    color: '#333',
+    fontWeight: '500',
+  },
+  infoValueRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+    justifyContent: 'flex-end',
+  },  
 });
 
 export default Profile;

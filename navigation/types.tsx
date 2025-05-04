@@ -6,5 +6,6 @@ export type RootStackParamList = {
     Profile: undefined;
     ProfileDetail: undefined;
     BottomTabs: undefined;
+    Settings: undefined;
   };
   
