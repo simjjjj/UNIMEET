@@ -1,17 +1,15 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import Header from '../../navigation/Header';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
-// 참가자 타입 정의
 type Participant = {
   id: number;
   name: string;
   gender: '남' | '여';
 };
 
-// 미팅방 타입 정의
 type MeetingRoom = {
   id: number;
   participants: Participant[];
@@ -43,7 +41,11 @@ const Home: React.FC = () => {
       id: 3,
       participants: [
         { id: 1, name: "생명공학과", gender: "남" },
-        { id: 2, name: "바이오메디컬공학과", gender: "여" },
+        { id: 2, name: "", gender: "여" },
+        { id: 3, name: "컴퓨터공학과", gender: '남'},
+        { id: 4, name: '스포츠건강학과', gender: '여'},
+        { id: 5, name: '바이오메디컬공학과', gender: '여'},
+        { id: 6, name: '', gender: '남'},
       ]
     },
   ]);
@@ -52,15 +54,22 @@ const Home: React.FC = () => {
     alert('홈 화면에서 알림을 눌렀습니다!');
   };
 
+  const handleCreateRoom = () => {
+    alert('방 만들기 기능 준비 중!');
+  };
+
+  const handleMeetingInfo = () => {
+    alert('설명하는 기능 준비중');
+  };
+
   return (
     <LinearGradient
-        colors={['#FFB1E8', '#EC75FF', '#947CFF', '#F0F0E9', '#F0F0E9']}
-        locations={[0, 0.28, 0.54, 0.9, 1]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 0, y: 0.5 }}
-        style={styles.container}
-        >
-
+      colors={['#FFB1E8', '#EC75FF', '#947CFF', '#F0F0E9', '#F0F0E9']}
+      locations={[0, 0.28, 0.54, 0.9, 1]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 0, y: 0.5 }}
+      style={styles.container}
+    >
       <Header title="UniMeet" onNotificationPress={handleNotificationPress} />
 
       <ScrollView contentContainerStyle={styles.content}>
@@ -75,61 +84,95 @@ const Home: React.FC = () => {
 
         <View style={styles.meetingContainer}>
           <Text style={styles.text1}>미팅</Text>
-          <Ionicons name="help-circle-outline" size={20} color="#3D3D3D" style={styles.icon} />
+          <TouchableOpacity onPress={handleMeetingInfo}>
+            <Ionicons name="help-circle-outline" size={20} style={styles.icon} />
+          </TouchableOpacity>
+          <View style={{ flex: 1 }} />
+          <TouchableOpacity style={styles.createRoomBtn} onPress={handleCreateRoom}>
+            <Ionicons name="add-circle-outline" size={15} style={{ marginRight: 2 }} />
+            <Text style={styles.createRoomBtnText}>방만들기</Text>
+          </TouchableOpacity>
         </View>
 
         {meetingRooms.map((room) => (
           <View key={room.id} style={styles.meetingCard}>
             <View style={styles.cardHeader}>
               <Text style={styles.cardTitle}>미팅 방 {room.id}</Text>
-              <Ionicons name="people-outline" size={24} color="#3D3D3D" />
             </View>
             <View style={styles.participantsContainer}>
+              {/* 혼성 그룹 */}
               {room.id === 3 ? (
-                // 혼성방: 모든 참가자를 주황색으로 표시
-                <View style={styles.group}>
-                  {room.participants.map((participant) => (
-                    <View key={participant.id} style={styles.participantRow}>
-                      <Ionicons name="person" size={15} style={styles.mixed} />
-                      <Text style={[styles.participantText, styles.mixed]}>{participant.name}</Text>
-                    </View>
-                  ))}
+                <View style={styles.mixedBox}>
+                  <Text style={styles.mixedLabel}>혼성</Text>
+                  <View style={styles.mixedParticipantsWrap}>
+                    {room.participants.map((participant) => (
+                      <View key={participant.id} style={styles.mixedParticipantRow}>
+                        <Ionicons name="person" size={15} style={styles.mixedIcon} />
+                        <Text
+                          style={[
+                            styles.participantText,
+                            styles.mixedIcon,
+                            participant.name === "" && styles.noName,
+                          ]}
+                        >
+                          {participant.name === "" ? "없음" : participant.name}
+                        </Text>
+                      </View>
+                    ))}
+                  </View>
                 </View>
               ) : (
-                <>
+                <View style={styles.genderRowWrap}>
                   {/* 남자 그룹 */}
-                  <View style={styles.group}>
-                    {room.participants
-                      .filter((participant) => participant.gender === "남")
-                      .map((participant) => (
-                        <View key={participant.id} style={styles.participantRow}>
-                          <Ionicons name="person" size={15} style={styles.male} />
-                          <Text style={[styles.participantText, styles.male]}>{participant.name}</Text>
-                        </View>
-                      ))}
+                  <View style={styles.genderBoxMale}>
+                    <Text style={styles.genderLabelMale}>남</Text>
+                    <View style={styles.participantsWrap}>
+                      {room.participants
+                        .filter((participant) => participant.gender === "남")
+                        .map((participant) => (
+                          <View key={participant.id} style={styles.participantRow}>
+                            <Ionicons name="person" size={12} style={styles.male} />
+                            <Text
+                              style={[
+                                styles.participantText,
+                                styles.male,
+                                participant.name === "" && styles.noName,
+                              ]}
+                            >
+                              {participant.name === "" ? "없음" : participant.name}
+                            </Text>
+                          </View>
+                        ))}
+                    </View>
                   </View>
-                  {/* 세로선 */}
-                  <View style={styles.divider}></View>
                   {/* 여자 그룹 */}
-                  <View style={styles.group}>
-                    {room.participants
-                      .filter((participant) => participant.gender === "여")
-                      .map((participant) => (
-                        <View key={participant.id} style={styles.participantRow}>
-                          <Ionicons name="person" size={15} style={styles.female} />
-                          <Text style={[styles.participantText, styles.female]}>{participant.name}</Text>
-                        </View>
-                      ))}
+                  <View style={styles.genderBoxFemale}>
+                    <Text style={styles.genderLabelFemale}>여</Text>
+                    <View style={styles.participantsWrap}>
+                      {room.participants
+                        .filter((participant) => participant.gender === "여")
+                        .map((participant) => (
+                          <View key={participant.id} style={styles.participantRow}>
+                            <Ionicons name="person" size={12} style={styles.female} />
+                            <Text
+                              style={[
+                                styles.participantText,
+                                styles.female,
+                                participant.name === "" && styles.noName,
+                              ]}
+                            >
+                              {participant.name === "" ? "없음" : participant.name}
+                            </Text>
+                          </View>
+                        ))}
+                    </View>
                   </View>
-                </>
+                </View>
               )}
             </View>
           </View>
         ))}
       </ScrollView>
-
-
-
     </LinearGradient>
   );
 };
@@ -164,7 +207,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#D1D0D0',
-    marginBottom: 40,
+    marginBottom: 30,
   },
   guideBoxText: {
     textAlign: 'center',
@@ -173,19 +216,34 @@ const styles = StyleSheet.create({
   text1: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 2,
+    marginLeft: 5,
   },
   meetingContainer: {
     width: '100%',
     flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 5,
   },
   icon: {
     marginRight: 5,
+    marginBottom: 2,
+    color: '#3D3D3D',
+  },
+  createRoomBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 5,
+    paddingHorizontal: 8,
+  },
+  createRoomBtnText: {
+    fontWeight: '600',
+    fontSize: 12,
   },
   meetingCard: {
     width: '100%',
-    padding: 15,
+    paddingTop: 15,
+    paddingBottom: 15,
     borderRadius: 10,
     backgroundColor: '#FFFFFF',
     marginBottom: 15,
@@ -200,6 +258,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 10,
+    marginLeft: 13,
   },
   cardTitle: {
     fontSize: 16,
@@ -207,18 +266,113 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   participantsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
     alignItems: 'flex-start',
     paddingHorizontal: 10,
+    width: '100%',
   },
-  group: {
+  // 남/여 그룹 한 줄에
+  genderRowWrap: {
+    flexDirection: 'row',
+    width: '100%',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  genderBoxMale: {
     flex: 1,
+    backgroundColor: '#F0F0F0',
+    borderRadius: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    marginRight: 5,
+    minHeight: 60,
+    // iOS
+    shadowColor: '#000',
+    shadowOffset: { width: 1, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+
+    // Android
+    elevation: 4,
+  },
+  genderBoxFemale: {
+    flex: 1,
+    backgroundColor: '#F0F0F0',
+    borderRadius: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    marginLeft: 5,
+    minHeight: 60,
+    shadowColor: '#000',
+    shadowOffset: { width: 1, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 4,
+  },
+  genderLabelMale: {
+    fontWeight: '500',
+    color: '#1976d2',
+    fontSize: 12,
+    marginRight: 8,
+    minWidth: 20,
+    textAlignVertical: 'center',
+  },
+  genderLabelFemale: {
+    fontWeight: '500',
+    color: '#d81b60',
+    fontSize: 12,
+    marginRight: 8,
+    minWidth: 20,
+    textAlignVertical: 'center',
+  },
+  participantsWrap: {
+    flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
   },
   participantRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 5,
+    marginBottom: 10,
+    minWidth: 70,
+  },
+  mixedBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F0F0F0',
+    borderRadius: 10,
+    padding: 10,
+    minHeight: 60,
+    width: '100%',
+    shadowColor: '#000',
+    shadowOffset: { width: 1, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 4,
+  },
+  mixedLabel: {
+    fontWeight: '500',
+    color: '#FF9800',
+    fontSize: 12,
+    minWidth: 28,
+    textAlignVertical: 'center',
+  },
+  mixedParticipantsWrap: {
+    flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+  },
+  mixedParticipantRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 7,
+    minWidth: 120,
+    marginLeft: 25,
   },
   male: {
     color: '#1976d2',
@@ -228,18 +382,16 @@ const styles = StyleSheet.create({
     color: '#d81b60',
     marginRight: 5,
   },
-  mixed: {
-    color: '#FF9800', // 주황색
+  mixedIcon: {
+    color: '#FF9800',
     marginRight: 5,
   },
   participantText: {
-    fontSize: 14,
+    fontSize: 12,
   },
-  divider: {
-    width: 1,
-    backgroundColor: '#ccc',
-    marginHorizontal: 10,
-    height: '100%',
+  noName: {
+    color: '#BDBDBD',
+    fontStyle: 'italic',
   },
 });
 
