@@ -196,6 +196,7 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 5,
+    elevation: 2,
     marginRight: 100,
   },
   interestTags: {
@@ -218,6 +219,7 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 5,
+    elevation: 2,
   },
 });
 
