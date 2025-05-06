@@ -41,9 +41,10 @@ const styles = StyleSheet.create({
     flex: 1,
     left: 10,
     color: 'white',
-    textShadowColor: 'rgba(0,0,0,0.75)',
-    textShadowOffset: { width: 3, height: 2 },
-    textShadowRadius: 5,
+    textShadowColor: '#000',
+    textShadowOffset: { width: 1, height: 2 },
+    textShadowRadius: 4,
+    elevation: 4, // Android
   },
   notificationButton: {
     padding: 10,

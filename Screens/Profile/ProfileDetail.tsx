@@ -10,17 +10,20 @@ const ProfileDetail: React.FC = () => {
   const navigation = useNavigation();
   const profile = useSelector((state: RootState) => state.profile);
 
-  const myInfoList = [
-    { label: '이름', value: profile.name },
-    { label: '닉네임', value: profile.nickname },
-    { label: '생년월일', value: profile.birth },
-    { label: '학과', value: profile.department },
-    { label: '학번', value: profile.studentId },
-    { label: '나이', value: profile.age },
-    { label: '키', value: profile.height },
-    { label: '전화번호', value: profile.phone },
-    { label: '가입일', value: profile.joinDate },
-  ];
+  const myInfoList: {
+    label: string;
+    value: string;
+    }[] = [
+      { label: '이름', value: profile.name },
+      { label: '닉네임', value: profile.nickname },
+      { label: '생년월일', value: profile.birth },
+      { label: '학과', value: profile.department },
+      { label: '학번', value: profile.studentId },
+      { label: '나이', value: profile.age },
+      { label: '키', value: profile.height },
+      { label: '전화번호', value: profile.phone },
+      { label: '가입일', value: profile.joinDate },
+    ];
 
   return (
     <LinearGradient
@@ -99,6 +102,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 2, height: 3 },
+    shadowOpacity: 0.5,
+    shadowRadius: 4,
+    elevation: 5, // Android
   },
   titleBox: {
     position: 'absolute',
@@ -112,12 +120,13 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
-    fontWeight: '500',
+    fontWeight: '600',
     color: 'white',
     textAlign: 'center',
-    textShadowColor: 'rgba(0,0,0,0.75)',
-    textShadowOffset: { width: 3, height: 2 },
-    textShadowRadius: 5,
+    textShadowColor: '#000',
+    textShadowOffset: { width: 1, height: 2 },
+    textShadowRadius: 4,
+    elevation: 4, // Android
   },
   content: {
     flexGrow: 1,

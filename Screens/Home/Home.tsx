@@ -587,6 +587,9 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '800',
     letterSpacing: 0.8,
+    textShadowColor: 'rgba(0,0,0,0.75)',
+    textShadowOffset: { width: 1, height: 2 },
+    textShadowRadius: 3,
   },
   modalBody: {
     padding: 25,
