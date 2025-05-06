@@ -35,7 +35,7 @@ const ProfileDetail: React.FC = () => {
     >
       <View style={styles.headerRow}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.sideButton}>
-          <Ionicons name="arrow-back" size={28} color="#fff" />
+          <Ionicons name="arrow-back" size={25} color="#fff" />
         </TouchableOpacity>
         <View style={styles.titleBox}>
           <Text style={styles.title}>나의 프로필 상세 정보</Text>

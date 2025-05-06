@@ -1,24 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal, TextInput, Button } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal, TextInput } from 'react-native';
 import Header from '../../navigation/Header';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-
-// 타입 정의
-type Gender = '남' | '여';
-
-interface Participant {
-  id: number;
-  name: string;
-  gender: Gender;
-}
-
-interface MeetingRoom {
-  id: number;
-  title: string;
-  participants: Participant[];
-  type?: 'pair' | 'mixed'; // 혼성방 여부
-}
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { MeetingRoom, Participant, Gender, RootStackParamList } from '../../navigation/types';
 
 interface RoomPreset {
   label: string;
@@ -36,15 +23,16 @@ const ROOM_PRESETS: RoomPreset[] = [
 ];
 
 const Home: React.FC = () => {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [meetingRooms, setMeetingRooms] = useState<MeetingRoom[]>([
     {
       id: 1,
       title: '기본 2:2',
       participants: [
-        { id: 1, name: "컴퓨터공학과", gender: "남" },
-        { id: 2, name: "메카트로닉스공학과", gender: "남" },
-        { id: 3, name: "유아교육과", gender: "여" },
-        { id: 4, name: "간호학과", gender: "여" },
+        { id: 1, name: "컴퓨터공학과", gender: "남" as Gender },
+        { id: 2, name: "메카트로닉스공학과", gender: "남" as Gender },
+        { id: 3, name: "유아교육과", gender: "여" as Gender },
+        { id: 4, name: "간호학과", gender: "여" as Gender },
       ],
       type: 'pair',
     },
@@ -52,12 +40,12 @@ const Home: React.FC = () => {
       id: 2,
       title: '3:3 방',
       participants: [
-        { id: 5, name: "남자3", gender: "남" },
-        { id: 6, name: "남자4", gender: "남" },
-        { id: 7, name: "남자5", gender: "남" },
-        { id: 8, name: "여자3", gender: "여" },
-        { id: 9, name: "여자4", gender: "여" },
-        { id: 10, name: "여자6", gender: "여" },
+        { id: 5, name: "남자3", gender: "남" as Gender },
+        { id: 6, name: "", gender: "남" as Gender},
+        { id: 7, name: "", gender: "남" as Gender},
+        { id: 8, name: "여자3", gender: "여" as Gender},
+        { id: 9, name: "", gender: "여" as Gender},
+        { id: 10, name: "여자6", gender: "여" as Gender},
       ],
       type: 'pair',
     },
@@ -65,12 +53,12 @@ const Home: React.FC = () => {
       id: 3,
       title: '혼성방',
       participants: [
-        { id: 1, name: "생명공학과", gender: "남" },
-        { id: 2, name: "스포츠건강학과", gender: "여" },
-        { id: 3, name: "컴퓨터공학과", gender: '남' },
-        { id: 4, name: '', gender: '여' },
-        { id: 5, name: '바이오메디컬공학과', gender: '여' },
-        { id: 6, name: '', gender: '남' },
+        { id: 1, name: "생명공학과", gender: "남" as Gender},
+        { id: 2, name: "스포츠건강학과", gender: "여" as Gender},
+        { id: 3, name: "컴퓨터공학과", gender: '남' as Gender},
+        { id: 4, name: '', gender: '여' as Gender},
+        { id: 5, name: '바이오메디컬공학과', gender: '여' as Gender},
+        { id: 6, name: '', gender: '남' as Gender},
       ],
       type: 'mixed',
     },
@@ -83,8 +71,6 @@ const Home: React.FC = () => {
 
   // 인원수 표시
   const getPeopleLabel = (room: MeetingRoom) => {
-    const maleTotal :number = room.participants.filter(p => p.gender === "남").length;
-    const femaleTotal :number = room.participants.filter(p => p.gender === "여").length;
     if (room.type === 'mixed') {
       return `${room.participants.length}인`;
     }
@@ -104,16 +90,30 @@ const Home: React.FC = () => {
 
   const handleAddRoom = () => {
     if (!roomTitle.trim()) return;
-    const m :number = selectedPreset.male;
-    const f :number = selectedPreset.female;
-    const newId :number = (meetingRooms.length ? Math.max(...meetingRooms.map(r => r.id)) : 0) + 1;
+    const newId = meetingRooms.length ? Math.max(...meetingRooms.map(r => r.id)) + 1 : 1;
+    
     const participants: Participant[] = [
-      ...Array(m).fill(null).map((_, idx) => ({ id: newId * 100 + idx + 1, name: "", gender: "남" as Gender })),
-      ...Array(f).fill(null).map((_, idx) => ({ id: newId * 100 + m + idx + 1, name: "", gender: "여" as Gender })),
+      ...Array(selectedPreset.male).fill(null).map((_, idx) => ({
+        id: newId * 100 + idx + 1,
+        name: "",
+        gender: "남" as Gender
+      })),
+      ...Array(selectedPreset.female).fill(null).map((_, idx) => ({
+        id: newId * 100 + selectedPreset.male + idx + 1,
+        name: "",
+        gender: "여" as Gender
+      })),
     ];
-    const type: 'pair' | 'mixed' = selectedPreset.type;
-    const title :string = roomTitle;
-    setMeetingRooms([...meetingRooms, { id: newId, title, participants, type }]);
+
+    setMeetingRooms(prev => [
+      ...prev,
+      { 
+        id: newId, 
+        title: roomTitle, 
+        participants,
+        type: selectedPreset.type 
+      }
+    ]);
     setModalVisible(false);
     setRoomTitle('');
     setSelectedPreset(ROOM_PRESETS[0]);
@@ -152,12 +152,16 @@ const Home: React.FC = () => {
         </View>
 
         {meetingRooms.map((room) => {
-          const maleTotal :number = room.participants.filter(p => p.gender === "남").length;
-          const femaleTotal :number = room.participants.filter(p => p.gender === "여").length;
-          const isPureGender :boolean = room.type !== 'mixed';
           const isMixed :boolean = room.type === 'mixed';
           return (
-            <View key={room.id} style={styles.meetingCard}>
+            <TouchableOpacity
+              key={room.id}
+              style={styles.meetingCard}
+              activeOpacity={0.85}
+              onPress={() => {
+                navigation.navigate('RoomDetail', { room });
+              }}
+            >
               <View style={styles.cardHeader}>
                 <Text style={styles.cardTitle}>{room.title}</Text>
                 <View style={styles.statusRow}>
@@ -242,7 +246,7 @@ const Home: React.FC = () => {
                   </View>
                 )}
               </View>
-            </View>
+            </TouchableOpacity>
           );
         })}
       </ScrollView>
@@ -343,8 +347,8 @@ const styles = StyleSheet.create({
   },
   comment: {
     width: '100%',
-    height: 30,
-    backgroundColor: '#D1D0D0',
+    height: 28,
+    backgroundColor: '#FFFFFF',
     borderRadius: 15,
     justifyContent: 'center',
     alignItems: 'center',
