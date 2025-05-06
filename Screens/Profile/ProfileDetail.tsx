@@ -86,7 +86,7 @@ const ProfileDetail: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 50,
+    paddingTop: 60,
   },
   headerRow: {
     flexDirection: 'row',
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 2, height: 3 },
     shadowOpacity: 0.5,
     shadowRadius: 4,
-    elevation: 5, // Android
+    elevation: 5,
   },
   titleBox: {
     position: 'absolute',

@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
     left: 10,
     color: 'white',
     textShadowColor: '#000',
-    textShadowOffset: { width: 0.8, height: 1 },
+    textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 4,
     elevation: 4, // Android
   },

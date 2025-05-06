@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingTop: 60,
+    paddingTop: 70,
     paddingBottom: 18,
     paddingHorizontal: 18,
     justifyContent: 'space-between',
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
     textShadowColor: '#000',
-    textShadowOffset: { width: 1, height: 2 },
+    textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 4,
     elevation: 4,
   },

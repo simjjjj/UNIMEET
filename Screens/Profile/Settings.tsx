@@ -57,7 +57,7 @@ const Settings: React.FC = () => {
     >
       <View style={styles.headerRow}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={28} color="#fff" />
+          <Ionicons name="arrow-back" size={25} color="#fff" />
         </TouchableOpacity>
         <View style={styles.titleContainer}>
           <Text style={styles.title}>환경설정</Text>
@@ -121,6 +121,14 @@ const styles = StyleSheet.create({
   backButton: {
     padding: 8,
     zIndex: 1,
+    width: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 2, height: 3 },
+    shadowOpacity: 0.5,
+    shadowRadius: 4,
+    elevation: 5,
   },
   titleContainer: {
     position: 'absolute',
@@ -135,9 +143,10 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: 'white',
     textAlign: 'center',
-    textShadowColor: 'rgba(0,0,0,0.75)',
-    textShadowOffset: { width: 2, height: 1 },
-    textShadowRadius: 5,
+    textShadowColor: '#000',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 4,
+    elevation: 4,
   },
   settingBox: {
     backgroundColor: '#fff',
