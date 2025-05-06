@@ -53,11 +53,11 @@ const Home: React.FC = () => {
       title: '3:3 방',
       participants: [
         { id: 5, name: "남자3", gender: "남" },
-        { id: 6, name: "남자 4", gender: "남" },
-        { id: 7, name: "", gender: "남" },
+        { id: 6, name: "남자4", gender: "남" },
+        { id: 7, name: "남자5", gender: "남" },
         { id: 8, name: "여자3", gender: "여" },
         { id: 9, name: "여자4", gender: "여" },
-        { id: 10, name: "", gender: "여" },
+        { id: 10, name: "여자6", gender: "여" },
       ],
       type: 'pair',
     },
@@ -168,7 +168,7 @@ const Home: React.FC = () => {
                       isRoomFull(room) ? styles.fullStatus : styles.openStatus,
                     ]}
                   >
-                    {isRoomFull(room) ? "방이 다 찼습니다" : "참여가 가능해요"}
+                    {isRoomFull(room) ? "인원이 다 찼어요" : "참여가 가능해요"}
                   </Text>
                 </View>
               </View>
@@ -251,40 +251,79 @@ const Home: React.FC = () => {
       <Modal
         visible={modalVisible}
         transparent
-        animationType="slide"
+        animationType="fade"
         onRequestClose={() => setModalVisible(false)}
       >
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={{ fontWeight: 'bold', fontSize: 16, marginBottom: 10 }}>방 만들기</Text>
-            <Text style={{ marginBottom: 8 }}>미팅방 제목</Text>
-            <TextInput
-              style={styles.input}
-              value={roomTitle}
-              onChangeText={setRoomTitle}
-              placeholder="방 제목을 입력하세요"
-            />
-            <Text style={{ marginTop: 10, marginBottom: 8 }}>방 유형</Text>
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginBottom: 10 }}>
-              {ROOM_PRESETS.map(preset => (
-                <TouchableOpacity
-                  key={preset.label}
-                  style={[
-                    styles.presetBtn,
-                    selectedPreset.label === preset.label && styles.presetBtnSelected
-                  ]}
-                  onPress={() => setSelectedPreset(preset)}
-                >
-                  <Text style={[
-                    styles.presetBtnText,
-                    selectedPreset.label === preset.label && styles.presetBtnTextSelected
-                  ]}>{preset.label}</Text>
-                </TouchableOpacity>
-              ))}
+          <View style={styles.modalContainer}>
+            {/* 헤더 */}
+            <LinearGradient
+              colors={['#947CFF', '#EC75FF']}
+              start={{x: 0, y: 0}}
+              end={{x: 1, y: 0}}
+              style={styles.modalHeader}
+            >
+              <Text style={styles.modalHeaderText}>새로운 미팅방</Text>
+            </LinearGradient>
+
+            {/* 본문 */}
+            <View style={styles.modalBody}>
+              <Text style={styles.inputLabel}>방 제목</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="예) 즐겁게 놀아요"
+                placeholderTextColor="#A0A0A0"
+                value={roomTitle}
+                onChangeText={setRoomTitle}
+              />
+
+              <Text style={styles.presetLabel}>유형 선택</Text>
+              <View style={styles.presetContainer}>
+                {ROOM_PRESETS.map((preset) => (
+                  <TouchableOpacity
+                    key={preset.label}
+                    style={[
+                      styles.presetButton,
+                      selectedPreset.label === preset.label && styles.presetButtonSelected
+                    ]}
+                    onPress={() => setSelectedPreset(preset)}
+                  >
+                    <Ionicons 
+                      name={preset.type === 'mixed' ? 'people' : 'male-female'} 
+                      size={20} 
+                      color={selectedPreset.label === preset.label ? '#FFF' : '#947CFF'} 
+                    />
+                    <Text style={[
+                      styles.presetText,
+                      selectedPreset.label === preset.label && styles.presetTextSelected
+                    ]}>
+                      {preset.label}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
             </View>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 20 }}>
-              <Button title="취소" onPress={() => setModalVisible(false)} />
-              <Button title="생성" onPress={handleAddRoom} />
+
+            {/* 버튼 그룹 */}
+            <View style={styles.buttonGroup}>
+              <TouchableOpacity 
+                style={styles.cancelButton}
+                onPress={() => setModalVisible(false)}
+              >
+                <Text style={styles.cancelButtonText}>닫기</Text>
+              </TouchableOpacity>
+              <LinearGradient
+                colors={['#947CFF', '#EC75FF']}
+                style={styles.createButton}
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 0}}
+              >
+                <TouchableOpacity onPress={handleAddRoom}>
+                  <Text style={styles.createButtonText}>
+                    <Ionicons name="rocket" size={14} /> 생성하기
+                  </Text>
+                </TouchableOpacity>
+              </LinearGradient>
             </View>
           </View>
         </View>
@@ -509,11 +548,11 @@ const styles = StyleSheet.create({
     marginLeft: 25
   },
   male: {
-    color: '#1976d2',
+    color: '#6846FF',
     marginRight: 5
   },
   female: {
-    color: '#d81b60',
+    color: '#FF62D5',
     marginRight: 5
   },
   mixedIcon: {
@@ -529,48 +568,101 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.3)',
+    backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  modalContent: {
-    width: 270,
-    backgroundColor: '#fff',
-    borderRadius: 12,
+  modalContainer: {
+    width: '85%',
+    borderRadius: 20,
+    overflow: 'hidden',
+    backgroundColor: '#FFF',
+  },
+  modalHeader: {
     padding: 20,
-    alignItems: 'stretch',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 10,
+    alignItems: 'center',
+  },
+  modalHeaderText: {
+    color: 'white',
+    fontSize: 20,
+    fontWeight: '800',
+    letterSpacing: 0.8,
+  },
+  modalBody: {
+    padding: 25,
+  },
+  inputLabel: {
+    color: '#444',
+    fontSize: 14,
+    marginBottom: 8,
+    fontWeight: '600',
   },
   input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 6,
-    padding: 8,
-    marginVertical: 6,
+    borderWidth: 1.5,
+    borderColor: '#EEE',
+    borderRadius: 12,
+    padding: 14,
+    fontSize: 15,
+    marginBottom: 25,
+    backgroundColor: '#FAFAFA',
   },
-  presetBtn: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-    backgroundColor: '#eee',
-    marginRight: 8,
-    marginBottom: 8,
+  presetLabel: {
+    color: '#444',
+    fontSize: 14,
+    marginBottom: 12,
+    fontWeight: '600',
   },
-  presetBtnSelected: {
+  presetContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+  },
+  presetButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 18,
+    borderRadius: 10,
+    borderWidth: 1.5,
+    borderColor: '#EEE',
+    gap: 8,
+  },
+  presetButtonSelected: {
     backgroundColor: '#947CFF',
+    borderColor: '#947CFF',
   },
-  presetBtnText: {
+  presetText: {
     fontSize: 13,
-    color: '#333',
+    color: '#666',
+    fontWeight: '500',
   },
-  presetBtnTextSelected: {
-    color: '#fff',
-    fontWeight: 'bold',
+  presetTextSelected: {
+    color: '#FFF',
   },
+  buttonGroup: {
+    flexDirection: 'row',
+    borderTopWidth: 1,
+    borderTopColor: '#F0F0F0',
+  },
+  cancelButton: {
+    flex: 0.8,
+    padding: 18,
+    alignItems: 'center',
+    backgroundColor: '#FFF',
+  },
+  cancelButtonText: {
+    color: '#666',
+    fontWeight: '500',
+  },
+  createButton: {
+    flex: 1,
+  },
+  createButtonText: {
+    color: '#FFF',
+    fontWeight: '700',
+    textAlign: 'center',
+    padding: 16,
+  },  
 });
 
 export default Home;
