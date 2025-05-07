@@ -28,7 +28,7 @@ const RoomDetail: React.FC = () => {
           <Ionicons name="arrow-back" size={25} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.title}>Meeting Room</Text>
-        <View style={{ width: 34 }} />
+        <View style={{ width: 36 }} />
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
