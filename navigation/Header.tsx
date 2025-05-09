@@ -18,7 +18,7 @@ interface HeaderProps {
       <View style={styles.header}>
         <Text style={styles.title}>{title}</Text>
         <TouchableOpacity style={styles.notificationButton} onPress={onNotificationPress}>
-        <Ionicons name={iconName as any} size={22} color="#000" />
+        <Ionicons name={iconName as any} size={22} color="#fff" />
         </TouchableOpacity>
       </View>
     );
