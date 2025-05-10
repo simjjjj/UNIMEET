@@ -47,6 +47,11 @@ const styles = StyleSheet.create({
     elevation: 4, // Android
   },
   notificationButton: {
+    shadowColor: '#000',
+    shadowOffset: { width: 2, height: 3 },
+    shadowOpacity: 0.5,
+    shadowRadius: 4,
+    elevation: 5,
     padding: 10,
   },
   leftSpace: {
