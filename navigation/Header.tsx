@@ -10,7 +10,7 @@ interface HeaderProps {
 interface HeaderProps {
     title: string;
     onNotificationPress: () => void;
-    iconName?: string; // 아이콘 이름을 선택적으로 받음
+    iconName?: string;
   }
   
   const Header: React.FC<HeaderProps> = ({ title, onNotificationPress, iconName = "notifications-outline" }) => {

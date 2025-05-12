@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#eee',
   },
   lastRow: {
-    borderBottomWidth: 0, // 마지막 줄 밑줄 제거
+    borderBottomWidth: 0,
   },
   settingLeft: {
     flexDirection: 'row',
