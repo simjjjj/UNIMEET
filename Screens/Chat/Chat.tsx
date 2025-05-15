@@ -23,7 +23,6 @@ const Chat :React.FC = () => {
             <Header title="채팅" onNotificationPress={handleNotificationPress} />
 
             <ScrollView contentContainerStyle={styles.content}>
-                {/* 메인 콘텐츠 */}
                 <Text style={styles.text}>채팅 화면</Text>
             </ScrollView>
         </View>
