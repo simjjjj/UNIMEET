@@ -4,6 +4,11 @@ export interface Participant {
   id: number;
   name: string;
   gender: Gender;
+  department: string;
+  age: number;
+  studentId: string;
+  mbti: string;
+  interests: string[];
 }
 
 export interface MeetingRoom {

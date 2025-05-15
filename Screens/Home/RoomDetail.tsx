@@ -6,10 +6,23 @@ import { LinearGradient } from 'expo-linear-gradient';
 import type { RootStackParamList } from '../../navigation/types';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
+// 참가자 정보 출력용 컴포넌트
+const ParticipantInfo: React.FC<{ p: any }> = ({ p }) => (
+  <View style={styles.participantInfoBox}>
+    <Text style={styles.participantDepartment}>{p.department || '-'}</Text>
+    <Text style={styles.participantDetail}>
+      나이: {p.age || '-'} / 학번: {p.studentId || '-'}
+    </Text>
+    <Text style={styles.participantDetail}>
+      MBTI: {p.mbti || '-'} / 관심사: {p.interests && p.interests.length > 0 ? p.interests.join(', ') : '-'}
+    </Text>
+  </View>
+);
+
 const RoomDetail: React.FC = () => {
-    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-    const route = useRoute<RouteProp<RootStackParamList, 'RoomDetail'>>();
-    const { room } = route.params;
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const route = useRoute<RouteProp<RootStackParamList, 'RoomDetail'>>();
+  const { room } = route.params;
 
   const maleList = room.participants.filter(p => p.gender === '남');
   const femaleList = room.participants.filter(p => p.gender === '여');
@@ -17,12 +30,12 @@ const RoomDetail: React.FC = () => {
 
   return (
     <LinearGradient
-          colors={['#FF87DD', '#B092FF', '#DBD6EC', '#F0F0E9']}
-          locations={[0, 0.43, 0.71, 0.93]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0, y: 0.35 }}
-          style={styles.container}
-        >
+      colors={['#FF87DD', '#B092FF', '#DBD6EC', '#F0F0E9']}
+      locations={[0, 0.43, 0.71, 0.93]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 0, y: 0.35 }}
+      style={styles.container}
+    >
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.sideButton}>
           <Ionicons name="arrow-back" size={25} color="#fff" />
@@ -33,18 +46,13 @@ const RoomDetail: React.FC = () => {
 
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.comment}>
-            <Ionicons name="rocket-outline" size={12} color="#3D3D3D" style={styles.icon} />
-            <Text style={styles.commentText}>여기는 개발자 코멘트를 적는 곳.</Text>
+          <Ionicons name="rocket-outline" size={12} color="#3D3D3D" style={styles.icon} />
+          <Text style={styles.commentText}>여기는 개발자 코멘트를 적는 곳.</Text>
         </View>
 
         <View>
-            <Text>{ room.title }</Text>
+          <Text>{room.title}</Text>
         </View>
-
-        <View>
-
-        </View>
-
 
         <View style={styles.infoBox}>
           <Text style={styles.roomLabel}>방 유형</Text>
@@ -65,9 +73,7 @@ const RoomDetail: React.FC = () => {
             {room.participants.map(p => (
               <View key={p.id} style={styles.participantRow}>
                 <Ionicons name="person" size={16} color="#FF9800" style={{ marginRight: 7 }} />
-                <Text style={[styles.participantText, !p.name && styles.noName]}>
-                  {p.name ? p.name : '없음'} <Text style={{ color: '#aaa' }}></Text>
-                </Text>
+                <ParticipantInfo p={p} />
               </View>
             ))}
           </View>
@@ -78,9 +84,7 @@ const RoomDetail: React.FC = () => {
               {maleList.map(p => (
                 <View key={p.id} style={styles.participantRow}>
                   <Ionicons name="person" size={15} color="#6846FF" style={{ marginRight: 7 }} />
-                  <Text style={[styles.participantText, !p.name && styles.noName]}>
-                    {p.name ? p.name : '없음'}
-                  </Text>
+                  <ParticipantInfo p={p} />
                 </View>
               ))}
             </View>
@@ -89,9 +93,7 @@ const RoomDetail: React.FC = () => {
               {femaleList.map(p => (
                 <View key={p.id} style={styles.participantRow}>
                   <Ionicons name="person" size={15} color="#FF62D5" style={{ marginRight: 7 }} />
-                  <Text style={[styles.participantText, !p.name && styles.noName]}>
-                    {p.name ? p.name : '없음'}
-                  </Text>
+                  <ParticipantInfo p={p} />
                 </View>
               ))}
             </View>
@@ -179,12 +181,20 @@ const styles = StyleSheet.create({
   },
   participantRow: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     marginBottom: 9,
   },
-  participantText: {
-    fontSize: 14,
-    color: '#333',
+  participantInfoBox: {
+    flex: 1,
+  },
+  participantDepartment: {
+    fontSize: 13,
+    color: '#6846FF',
+    fontWeight: 'bold',
+  },
+  participantDetail: {
+    fontSize: 12,
+    color: '#444',
   },
   noName: {
     color: '#BDBDBD',

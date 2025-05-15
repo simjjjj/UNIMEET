@@ -24,15 +24,53 @@ const ROOM_PRESETS: RoomPreset[] = [
 
 const Home: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
+  // 대충 임의로 만든 데이터들
   const [meetingRooms, setMeetingRooms] = useState<MeetingRoom[]>([
     {
       id: 1,
       title: '기본 2:2',
       participants: [
-        { id: 1, name: "컴퓨터공학과", gender: "남" as Gender },
-        { id: 2, name: "메카트로닉스공학과", gender: "남" as Gender },
-        { id: 3, name: "유아교육과", gender: "여" as Gender },
-        { id: 4, name: "간호학과", gender: "여" as Gender },
+        {
+          id: 1,
+          name: "홍길동",
+          gender: "남",
+          department: "컴퓨터공학과",
+          age: 22,
+          studentId: "20201234",
+          mbti: "INTJ",
+          interests: ["프로그래밍", "음악"]
+        },
+        {
+          id: 2,
+          name: "이철수",
+          gender: "남",
+          department: "메카트로닉스공학과",
+          age: 23,
+          studentId: "20201235",
+          mbti: "ENFP",
+          interests: ["로봇", "여행"]
+        },
+        {
+          id: 3,
+          name: "김영희",
+          gender: "여",
+          department: "유아교육과",
+          age: 21,
+          studentId: "20201236",
+          mbti: "ISFJ",
+          interests: ["아이돌", "독서"]
+        },
+        {
+          id: 4,
+          name: "박수진",
+          gender: "여",
+          department: "간호학과",
+          age: 22,
+          studentId: "20201237",
+          mbti: "ENTJ",
+          interests: ["운동", "영화"]
+        },
       ],
       type: 'pair',
     },
@@ -40,12 +78,66 @@ const Home: React.FC = () => {
       id: 2,
       title: '3:3 방',
       participants: [
-        { id: 5, name: "남자3", gender: "남" as Gender },
-        { id: 6, name: "", gender: "남" as Gender},
-        { id: 7, name: "", gender: "남" as Gender},
-        { id: 8, name: "여자3", gender: "여" as Gender},
-        { id: 9, name: "", gender: "여" as Gender},
-        { id: 10, name: "여자6", gender: "여" as Gender},
+        {
+          id: 5,
+          name: "최민수",
+          gender: "남",
+          department: "전자공학과",
+          age: 24,
+          studentId: "20201238",
+          mbti: "ISTP",
+          interests: ["게임", "등산"]
+        },
+        {
+          id: 6,
+          name: "김철민",
+          gender: "남",
+          department: "기계공학과",
+          age: 23,
+          studentId: "20201239",
+          mbti: "ESFP",
+          interests: ["음악", "축구"]
+        },
+        {
+          id: 7,
+          name: "박준형",
+          gender: "남",
+          department: "토목공학과",
+          age: 22,
+          studentId: "20201240",
+          mbti: "INFJ",
+          interests: ["영화", "요리"]
+        },
+        {
+          id: 8,
+          name: "한지민",
+          gender: "여",
+          department: "경영학과",
+          age: 21,
+          studentId: "20201241",
+          mbti: "ENFJ",
+          interests: ["패션", "여행"]
+        },
+        {
+          id: 9,
+          name: "이민정",
+          gender: "여",
+          department: "디자인학과",
+          age: 22,
+          studentId: "20201242",
+          mbti: "ISFP",
+          interests: ["그림", "음악"]
+        },
+        {
+          id: 10,
+          name: "정유진",
+          gender: "여",
+          department: "화학공학과",
+          age: 23,
+          studentId: "20201243",
+          mbti: "ESTJ",
+          interests: ["독서", "수영"]
+        },
       ],
       type: 'pair',
     },
@@ -53,16 +145,70 @@ const Home: React.FC = () => {
       id: 3,
       title: '혼성방',
       participants: [
-        { id: 1, name: "생명공학과", gender: "남" as Gender},
-        { id: 2, name: "스포츠건강학과", gender: "여" as Gender},
-        { id: 3, name: "컴퓨터공학과", gender: '남' as Gender},
-        { id: 4, name: '', gender: '여' as Gender},
-        { id: 5, name: '바이오메디컬공학과', gender: '여' as Gender},
-        { id: 6, name: '', gender: '남' as Gender},
+        {
+          id: 11,
+          name: "박지성",
+          gender: "남",
+          department: "생명공학과",
+          age: 22,
+          studentId: "20201244",
+          mbti: "INTP",
+          interests: ["축구", "여행"]
+        },
+        {
+          id: 12,
+          name: "김소연",
+          gender: "여",
+          department: "스포츠건강학과",
+          age: 21,
+          studentId: "20201245",
+          mbti: "ESFJ",
+          interests: ["운동", "음악"]
+        },
+        {
+          id: 13,
+          name: "이동현",
+          gender: "남",
+          department: "컴퓨터공학과",
+          age: 23,
+          studentId: "20201246",
+          mbti: "ISTJ",
+          interests: ["프로그래밍", "게임"]
+        },
+        {
+          id: 14,
+          name: "최유리",
+          gender: "여",
+          department: "화학공학과",
+          age: 22,
+          studentId: "20201247",
+          mbti: "INFJ",
+          interests: ["영화", "요리"]
+        },
+        {
+          id: 15,
+          name: "정지훈",
+          gender: "남",
+          department: "바이오메디컬공학과",
+          age: 24,
+          studentId: "20201248",
+          mbti: "ENFP",
+          interests: ["음악", "운동"]
+        },
+        {
+          id: 16,
+          name: "김예린",
+          gender: "여",
+          department: "바이오메디컬공학과",
+          age: 21,
+          studentId: "20201249",
+          mbti: "INTJ",
+          interests: ["독서", "등산"]
+        },
       ],
       type: 'mixed',
     },
-  ]);
+  ]);  
 
   // 모달 상태 및 입력값
   const [modalVisible, setModalVisible] = useState<boolean>(false);
@@ -96,14 +242,25 @@ const Home: React.FC = () => {
       ...Array(selectedPreset.male).fill(null).map((_, idx) => ({
         id: newId * 100 + idx + 1,
         name: "",
-        gender: "남" as Gender
+        gender: "남" as Gender,
+        department: "",
+        age: 0,
+        studentId: "",
+        mbti: "",
+        interests: [],
       })),
       ...Array(selectedPreset.female).fill(null).map((_, idx) => ({
         id: newId * 100 + selectedPreset.male + idx + 1,
         name: "",
-        gender: "여" as Gender
+        gender: "여" as Gender,
+        department: "",
+        age: 0,
+        studentId: "",
+        mbti: "",
+        interests: [],
       })),
     ];
+    
 
     setMeetingRooms(prev => [
       ...prev,
@@ -191,7 +348,7 @@ const Home: React.FC = () => {
                               participant.name === "" && styles.noName,
                             ]}
                           >
-                            {participant.name === "" ? "없음" : participant.name}
+                            {participant.name === "" ? "없음" : participant.department}
                           </Text>
                         </View>
                       ))}
@@ -215,7 +372,7 @@ const Home: React.FC = () => {
                                   participant.name === "" && styles.noName,
                                 ]}
                               >
-                                {participant.name === "" ? "없음" : participant.name}
+                                {participant.name === "" ? "없음" : participant.department}
                               </Text>
                             </View>
                           ))}
@@ -237,7 +394,7 @@ const Home: React.FC = () => {
                                   participant.name === "" && styles.noName,
                                 ]}
                               >
-                                {participant.name === "" ? "없음" : participant.name}
+                                {participant.name === "" ? "없음" : participant.department}
                               </Text>
                             </View>
                           ))}
