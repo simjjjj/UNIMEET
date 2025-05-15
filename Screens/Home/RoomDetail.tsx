@@ -66,7 +66,7 @@ const RoomDetail: React.FC = () => {
               <View key={p.id} style={styles.participantRow}>
                 <Ionicons name="person" size={16} color="#FF9800" style={{ marginRight: 7 }} />
                 <Text style={[styles.participantText, !p.name && styles.noName]}>
-                  {p.name ? p.name : '없음'} <Text style={{ color: '#aaa' }}>({p.gender})</Text>
+                  {p.name ? p.name : '없음'} <Text style={{ color: '#aaa' }}></Text>
                 </Text>
               </View>
             ))}
