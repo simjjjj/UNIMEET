@@ -47,7 +47,7 @@ const RoomDetail: React.FC = () => {
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.comment}>
           <Ionicons name="rocket-outline" size={12} color="#3D3D3D" style={styles.icon} />
-          <Text style={styles.commentText}>여기는 개발자 코멘트를 적는 곳.</Text>
+          <Text style={styles.commentText}>모든 멤버가 참가 상태이면 정식 채팅방이 시작됩니다.</Text>
         </View>
 
         <View>
