@@ -51,22 +51,22 @@ const RoomDetail: React.FC = () => {
         </View>
 
         <View>
-          <Text>{room.title}</Text>
+          <Text style={styles.mainTitle}>{room.title}</Text>
         </View>
 
-        <View style={styles.infoBox}>
+        {/* <View style={styles.infoBox}>
           <Text style={styles.roomLabel}>방 유형</Text>
           <Text style={styles.roomValue}>{isMixed ? '혼성' : '남/여'}</Text>
         </View>
         <View style={styles.infoBox}>
           <Text style={styles.roomLabel}>총 인원</Text>
           <Text style={styles.roomValue}>{room.participants.length}인</Text>
-        </View>
+        </View> */}
 
-        <View style={styles.sectionTitleRow}>
+        {/* <View style={styles.sectionTitleRow}>
           <Ionicons name="people" size={18} color="#FFFFFF" />
           <Text style={styles.sectionTitle}>참가자 목록</Text>
-        </View>
+        </View> */}
 
         {isMixed ? (
           <View style={styles.participantGroupBox}>
@@ -78,9 +78,9 @@ const RoomDetail: React.FC = () => {
             ))}
           </View>
         ) : (
-          <View style={{ flexDirection: 'row', gap: 10 }}>
+          <View>
+            <Text style={styles.groupLabel}>남자그룹</Text>
             <View style={styles.participantGroupBox}>
-              <Text style={styles.groupLabel}>남</Text>
               {maleList.map(p => (
                 <View key={p.id} style={styles.participantRow}>
                   <Ionicons name="person" size={15} color="#6846FF" style={{ marginRight: 7 }} />
@@ -88,8 +88,8 @@ const RoomDetail: React.FC = () => {
                 </View>
               ))}
             </View>
+            <Text style={styles.groupLabel}>여자그룹</Text>
             <View style={styles.participantGroupBox}>
-              <Text style={styles.groupLabel}>여</Text>
               {femaleList.map(p => (
                 <View key={p.id} style={styles.participantRow}>
                   <Ionicons name="person" size={15} color="#FF62D5" style={{ marginRight: 7 }} />
@@ -127,7 +127,6 @@ const styles = StyleSheet.create({
   content: {
     paddingTop: 10,
     paddingHorizontal: 15,
-    alignItems: 'center'
   },
   infoBox: {
     flexDirection: 'row',
@@ -150,6 +149,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
   },
+  mainTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
   sectionTitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -164,11 +167,6 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
   participantGroupBox: {
-    backgroundColor: '#F7F6FF',
-    borderRadius: 12,
-    padding: 15,
-    minWidth: 120,
-    margin: 6,
     marginBottom: 16,
     alignItems: 'flex-start',
     flex: 1,
@@ -183,6 +181,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     marginBottom: 9,
+    backgroundColor: '#FAFAFA',
   },
   participantInfoBox: {
     flex: 1,
