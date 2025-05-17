@@ -6,18 +6,41 @@ import { LinearGradient } from 'expo-linear-gradient';
 import type { RootStackParamList } from '../../navigation/types';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-// 참가자 정보 출력용 컴포넌트
-const ParticipantInfo: React.FC<{ p: any }> = ({ p }) => (
-  <View style={styles.participantInfoBox}>
-    <Text style={styles.participantDepartment}>{p.department || '-'}</Text>
-    <Text style={styles.participantDetail}>
-      나이: {p.age || '-'} / 학번: {p.studentId || '-'}
-    </Text>
-    <Text style={styles.participantDetail}>
-      MBTI: {p.mbti || '-'} / 관심사: {p.interests && p.interests.length > 0 ? p.interests.join(', ') : '-'}
-    </Text>
+// 참가자 정보 카드 컴포넌트
+const ParticipantInfo: React.FC<{ p: any; color: string }> = ({ p, color }) => (
+  <View style={styles.participantCard}>
+    {/* 학과 + 아이콘 (색상 전달) */}
+    <View style={styles.departmentRow}>
+      <Ionicons name="person" size={16} color={color} style={{ marginRight: 2 }} />
+      <Text style={[styles.participantDepartment, { color }]}>{p.department || '-'}</Text>
+    </View>
+    {/* 정보 박스 */}
+    <View style={styles.detailsBox}>
+      <View style={styles.detailItem}>
+        <Text style={styles.detailText}>나이: {p.age || '-'}</Text>
+        <View style={styles.line} />
+      </View>
+      <View style={styles.detailItem}>
+        <Text style={styles.detailText}>학번: {p.studentId || '-'}</Text>
+        <View style={styles.line} />
+      </View>
+      <View style={styles.detailItem}>
+        <Text style={styles.detailText}>MBTI: {p.mbti || '-'}</Text>
+        <View style={styles.line} />
+      </View>
+      <Text style={styles.detailText}>관심사: {p.interests?.join(', ') || '-'}</Text>
+    </View>
   </View>
 );
+
+// 3개씩 끊어서 2차원 배열로 변환
+function chunkArray(arr: any[], size: number) {
+  const result = [];
+  for (let i = 0; i < arr.length; i += size) {
+    result.push(arr.slice(i, i + size));
+  }
+  return result;
+}
 
 const RoomDetail: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -27,6 +50,13 @@ const RoomDetail: React.FC = () => {
   const maleList = room.participants.filter(p => p.gender === '남');
   const femaleList = room.participants.filter(p => p.gender === '여');
   const isMixed = room.type === 'mixed';
+
+  // 색상 결정 함수
+  const getColor = (p: any) => {
+    if (isMixed) return '#FF9800'; // 혼성방은 주황
+    if (p.gender === '여') return '#FF62D5'; // 여자 핑크
+    return '#6846FF'; // 남자 보라
+  };
 
   return (
     <LinearGradient
@@ -54,50 +84,45 @@ const RoomDetail: React.FC = () => {
           <Text style={styles.mainTitle}>{room.title}</Text>
         </View>
 
-        {/* <View style={styles.infoBox}>
-          <Text style={styles.roomLabel}>방 유형</Text>
-          <Text style={styles.roomValue}>{isMixed ? '혼성' : '남/여'}</Text>
-        </View>
-        <View style={styles.infoBox}>
-          <Text style={styles.roomLabel}>총 인원</Text>
-          <Text style={styles.roomValue}>{room.participants.length}인</Text>
-        </View> */}
-
-        {/* <View style={styles.sectionTitleRow}>
-          <Ionicons name="people" size={18} color="#FFFFFF" />
-          <Text style={styles.sectionTitle}>참가자 목록</Text>
-        </View> */}
-
         {isMixed ? (
           <View style={styles.participantGroupBox}>
-            {room.participants.map(p => (
-              <View key={p.id} style={styles.participantRow}>
-                <Ionicons name="person" size={16} color="#FF9800" style={{ marginRight: 7 }} />
-                <ParticipantInfo p={p} />
+            {chunkArray(room.participants, 3).map((row, rowIdx) => (
+              <View key={rowIdx} style={styles.groupRow}>
+                {row.map(p => (
+                  <View key={p.id} style={styles.participantCardWrapper}>
+                    <ParticipantInfo p={p} color={getColor(p)} />
+                  </View>
+                ))}
               </View>
             ))}
           </View>
         ) : (
-          <View>
+          <>
             <Text style={styles.groupLabel}>남자그룹</Text>
             <View style={styles.participantGroupBox}>
-              {maleList.map(p => (
-                <View key={p.id} style={styles.participantRow}>
-                  <Ionicons name="person" size={15} color="#6846FF" style={{ marginRight: 7 }} />
-                  <ParticipantInfo p={p} />
+              {chunkArray(maleList, 3).map((row, rowIdx) => (
+                <View key={rowIdx} style={styles.groupRow}>
+                  {row.map(p => (
+                    <View key={p.id} style={styles.participantCardWrapper}>
+                      <ParticipantInfo p={p} color={getColor(p)} />
+                    </View>
+                  ))}
                 </View>
               ))}
             </View>
             <Text style={styles.groupLabel}>여자그룹</Text>
             <View style={styles.participantGroupBox}>
-              {femaleList.map(p => (
-                <View key={p.id} style={styles.participantRow}>
-                  <Ionicons name="person" size={15} color="#FF62D5" style={{ marginRight: 7 }} />
-                  <ParticipantInfo p={p} />
+              {chunkArray(femaleList, 3).map((row, rowIdx) => (
+                <View key={rowIdx} style={styles.groupRow}>
+                  {row.map(p => (
+                    <View key={p.id} style={styles.participantCardWrapper}>
+                      <ParticipantInfo p={p} color={getColor(p)} />
+                    </View>
+                  ))}
                 </View>
               ))}
             </View>
-          </View>
+          </>
         )}
       </ScrollView>
     </LinearGradient>
@@ -128,76 +153,32 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingHorizontal: 15,
   },
-  infoBox: {
-    flexDirection: 'row',
-    width: '85%',
-    justifyContent: 'space-between',
-    marginTop: 10,
-    marginBottom: 2,
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 14,
-    elevation: 1,
-  },
-  roomLabel: {
-    color: '#947CFF',
-    fontWeight: 'bold',
-    fontSize: 14,
-  },
-  roomValue: {
-    color: '#444',
-    fontSize: 14,
-    fontWeight: '500',
-  },
   mainTitle: {
     fontSize: 18,
     fontWeight: 'bold',
+    marginBottom: 18,
+    marginTop: 18,
   },
-  sectionTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 28,
-    marginBottom: 8,
-    gap: 7,
-  },
-  sectionTitle: {
-    fontSize: 17,
-    fontWeight: '600',
-    color: '#6846FF',
-    marginLeft: 5,
+  groupLabel: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    marginTop: 15,
+    marginBottom: 15,
+    marginLeft: 6,
   },
   participantGroupBox: {
     marginBottom: 16,
     alignItems: 'flex-start',
     flex: 1,
   },
-  groupLabel: {
-    fontSize: 15,
-    color: '#888',
-    fontWeight: 'bold',
-    marginBottom: 7,
-  },
-  participantRow: {
+  groupRow: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: 9,
-    backgroundColor: '#FAFAFA',
+    flexWrap: 'nowrap',
+    marginBottom: 12,
   },
-  participantInfoBox: {
-    flex: 1,
-  },
-  participantDepartment: {
-    fontSize: 13,
-    color: '#6846FF',
-    fontWeight: 'bold',
-  },
-  participantDetail: {
-    fontSize: 12,
-    color: '#444',
-  },
-  noName: {
-    color: '#BDBDBD',
-    fontStyle: 'italic',
+  participantCardWrapper: {
+    marginRight: 12,
+    marginBottom: 0,
   },
   sideButton: {
     width: 40,
@@ -228,6 +209,46 @@ const styles = StyleSheet.create({
     marginRight: 5,
     marginBottom: 2,
     color: '#3D3D3D'
+  },
+  participantCard: {
+    width: 112,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 12,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+  },
+  departmentRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  participantDepartment: {
+    fontSize: 10,
+    fontWeight: 'bold',
+  },
+  detailsBox: {
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    borderRadius: 6,
+    padding: 8,
+    marginTop: 8,
+    backgroundColor: '#FAF8F6'
+  },
+  detailItem: {
+    marginBottom: 6,
+  },
+  detailText: {
+    fontSize: 12,
+    color: '#444',
+  },
+  line: {
+    height: 1,
+    backgroundColor: '#8B4513',
+    marginVertical: 5,
   },
 });
 
