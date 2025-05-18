@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
   groupLabel: {
     fontSize: 13,
     fontWeight: 'bold',
-    marginTop: -5,
+    marginTop: -2,
     marginBottom: 10,
     marginLeft: 6,
   },
