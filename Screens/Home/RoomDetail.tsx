@@ -9,26 +9,32 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 // 참가자 정보 카드 컴포넌트
 const ParticipantInfo: React.FC<{ p: any; color: string }> = ({ p, color }) => (
   <View style={styles.participantCard}>
-    {/* 학과 + 아이콘 (색상 전달) */}
-    <View style={styles.departmentRow}>
-      <Ionicons name="person" size={16} color={color} style={{ marginRight: 2 }} />
-      <Text style={[styles.participantDepartment, { color }]}>{p.department || '-'}</Text>
+    <Ionicons
+      name="person"
+      size={12}
+      color={color}
+      style={styles.cardIcon}
+    />
+    <View style={styles.departmentBox}>
+      <Text style={[styles.participantDepartment, { color }]} numberOfLines={1} ellipsizeMode="tail">
+        {p.department || ''}
+      </Text>
     </View>
     {/* 정보 박스 */}
     <View style={styles.detailsBox}>
       <View style={styles.detailItem}>
-        <Text style={styles.detailText}>나이: {p.age || '-'}</Text>
+        <Text style={styles.detailText}>나이: {p.age || ''}</Text>
         <View style={styles.line} />
       </View>
       <View style={styles.detailItem}>
-        <Text style={styles.detailText}>학번: {p.studentId || '-'}</Text>
+        <Text style={styles.detailText}>학번: {p.studentId || ''}</Text>
         <View style={styles.line} />
       </View>
       <View style={styles.detailItem}>
-        <Text style={styles.detailText}>MBTI: {p.mbti || '-'}</Text>
+        <Text style={styles.detailText}>MBTI: {p.mbti || ''}</Text>
         <View style={styles.line} />
       </View>
-      <Text style={styles.detailText}>관심사: {p.interests?.join(', ') || '-'}</Text>
+      <Text style={styles.detailText}>관심사: {p.interests?.join(', ') || ''}</Text>
     </View>
   </View>
 );
@@ -220,15 +226,23 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.08,
     shadowRadius: 4,
     shadowOffset: { width: 0, height: 2 },
-  },
-  departmentRow: {
-    flexDirection: 'row',
+    position: 'relative',
     alignItems: 'center',
-    marginBottom: 8,
+    justifyContent: 'flex-start',
+  },
+  cardIcon: {
+    position: 'absolute',
+    top: 8,
+    left: 8,
+    zIndex: 2,
+  },
+  departmentBox: {
+    marginTop: 10,
   },
   participantDepartment: {
     fontSize: 10,
-    fontWeight: 'bold',
+    fontWeight: '500',
+    textAlign: 'center',
   },
   detailsBox: {
     borderWidth: 1,
@@ -242,12 +256,12 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   detailText: {
-    fontSize: 12,
+    fontSize: 10,
     color: '#444',
   },
   line: {
     height: 1,
-    backgroundColor: '#8B4513',
+    backgroundColor: '#D9D9D9',
     marginVertical: 5,
   },
 });

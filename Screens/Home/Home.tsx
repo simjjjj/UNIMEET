@@ -80,13 +80,13 @@ const Home: React.FC = () => {
       participants: [
         {
           id: 5,
-          name: "최민수",
+          name: "",
           gender: "남",
-          department: "전자공학과",
-          age: 24,
-          studentId: "21",
-          mbti: "ISTP",
-          interests: ["#게임", "#등산"]
+          department: "",
+          age: 0,
+          studentId: "",
+          mbti: "",
+          interests: []
         },
         {
           id: 6,
@@ -187,23 +187,23 @@ const Home: React.FC = () => {
         },
         {
           id: 15,
-          name: "정지훈",
+          name: "",
           gender: "남",
-          department: "바이오메디컬공학과",
-          age: 24,
-          studentId: "20",
-          mbti: "ENFP",
-          interests: ["#음악", "#운동"]
+          department: "",
+          age: 0,
+          studentId: "",
+          mbti: "",
+          interests: []
         },
         {
           id: 16,
-          name: "김예린",
+          name: "",
           gender: "여",
-          department: "바이오메디컬공학과",
-          age: 21,
-          studentId: "20",
-          mbti: "INTJ",
-          interests: ["#독서", "#등산"]
+          department: "",
+          age: 0,
+          studentId: "",
+          mbti: "",
+          interests: []
         },
       ],
       type: 'mixed',
