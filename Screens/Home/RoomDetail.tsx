@@ -10,8 +10,8 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 const ParticipantInfo: React.FC<{ p: any; color: string }> = ({ p, color }) => (
   <View style={styles.participantCard}>
     <Ionicons
-      name="person"
-      size={12}
+      name="person-circle"
+      size={16}
       color={color}
       style={styles.cardIcon}
     />
@@ -20,21 +20,28 @@ const ParticipantInfo: React.FC<{ p: any; color: string }> = ({ p, color }) => (
         {p.department || ''}
       </Text>
     </View>
-    {/* 정보 박스 */}
     <View style={styles.detailsBox}>
       <View style={styles.detailItem}>
-        <Text style={styles.detailText}>나이: {p.age || ''}</Text>
-        <View style={styles.line} />
+        <Text style={styles.detailLabel}>나이</Text>
+        <Text style={styles.detailText}>{p.age || '-'}</Text>
       </View>
+      <View style={styles.detailDivider} />
       <View style={styles.detailItem}>
-        <Text style={styles.detailText}>학번: {p.studentId || ''}</Text>
-        <View style={styles.line} />
+        <Text style={styles.detailLabel}>학번</Text>
+        <Text style={styles.detailText}>{p.studentId || '-'}</Text>
       </View>
+      <View style={styles.detailDivider} />
       <View style={styles.detailItem}>
-        <Text style={styles.detailText}>MBTI: {p.mbti || ''}</Text>
-        <View style={styles.line} />
+        <Text style={styles.detailLabel}>MBTI</Text>
+        <Text style={styles.detailText}>{p.mbti || '-'}</Text>
       </View>
-      <Text style={styles.detailText}>관심사: {p.interests?.join(', ') || ''}</Text>
+      <View style={styles.detailDivider} />
+      <View style={styles.detailItem}>
+        <Text style={styles.detailLabel}>관심사</Text>
+        <Text style={styles.detailText} numberOfLines={1} ellipsizeMode="tail">
+          {p.interests?.length ? p.interests.join(', ') : '-'}
+        </Text>
+      </View>
     </View>
   </View>
 );
@@ -91,42 +98,51 @@ const RoomDetail: React.FC = () => {
         </View>
 
         {isMixed ? (
-          <View style={styles.participantGroupBox}>
+          <ScrollView>
             {chunkArray(room.participants, 3).map((row, rowIdx) => (
-              <View key={rowIdx} style={styles.groupRow}>
+              <ScrollView
+                key={rowIdx}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.horizontalScroll}
+              >
                 {row.map(p => (
                   <View key={p.id} style={styles.participantCardWrapper}>
                     <ParticipantInfo p={p} color={getColor(p)} />
                   </View>
                 ))}
-              </View>
+              </ScrollView>
             ))}
-          </View>
+          </ScrollView>
         ) : (
           <>
             <Text style={styles.groupLabel}>남자그룹</Text>
             <View style={styles.participantGroupBox}>
-              {chunkArray(maleList, 3).map((row, rowIdx) => (
-                <View key={rowIdx} style={styles.groupRow}>
-                  {row.map(p => (
-                    <View key={p.id} style={styles.participantCardWrapper}>
-                      <ParticipantInfo p={p} color={getColor(p)} />
-                    </View>
-                  ))}
-                </View>
-              ))}
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.horizontalScroll}
+              >
+                {maleList.map(p => (
+                  <View key={p.id} style={styles.participantCardWrapper}>
+                    <ParticipantInfo p={p} color={getColor(p)} />
+                  </View>
+                ))}
+              </ScrollView>
             </View>
             <Text style={styles.groupLabel}>여자그룹</Text>
             <View style={styles.participantGroupBox}>
-              {chunkArray(femaleList, 3).map((row, rowIdx) => (
-                <View key={rowIdx} style={styles.groupRow}>
-                  {row.map(p => (
-                    <View key={p.id} style={styles.participantCardWrapper}>
-                      <ParticipantInfo p={p} color={getColor(p)} />
-                    </View>
-                  ))}
-                </View>
-              ))}
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.horizontalScroll}
+              >
+                {femaleList.map(p => (
+                  <View key={p.id} style={styles.participantCardWrapper}>
+                    <ParticipantInfo p={p} color={getColor(p)} />
+                  </View>
+                ))}
+              </ScrollView>
             </View>
           </>
         )}
@@ -166,25 +182,97 @@ const styles = StyleSheet.create({
     marginTop: 18,
   },
   groupLabel: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: 'bold',
-    marginTop: 15,
-    marginBottom: 15,
+    marginTop: -5,
+    marginBottom: 10,
     marginLeft: 6,
   },
   participantGroupBox: {
-    marginBottom: 16,
+    marginBottom: 24,
     alignItems: 'flex-start',
     flex: 1,
   },
-  groupRow: {
+  horizontalScroll: {
     flexDirection: 'row',
-    flexWrap: 'nowrap',
-    marginBottom: 12,
+    alignItems: 'flex-start',
+    paddingBottom: 4,
   },
   participantCardWrapper: {
-    marginRight: 12,
-    marginBottom: 0,
+    marginRight: 18,
+    marginBottom: 20,
+  },
+  participantCard: {
+    width: 130,
+    minHeight: 185,
+    backgroundColor: '#fff',
+    borderRadius: 14,
+    paddingTop: 16,
+    paddingBottom: 14,
+    paddingHorizontal: 10,
+    elevation: 4,
+    shadowColor: '#B092FF',
+    shadowOpacity: 0.14,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 3 },
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    position: 'relative',
+  },
+  cardIcon: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    zIndex: 2,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    elevation: 2,
+  },
+  departmentBox: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 12,
+    marginBottom: 12,
+  },
+  participantDepartment: {
+    fontSize: 12,
+    fontWeight: '500',
+    textAlign: 'center',
+    width: '100%',
+    letterSpacing: 0.5,
+  },
+  detailsBox: {
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    borderRadius: 10,
+    padding: 10,
+    backgroundColor: '#F8F5FF',
+    width: '100%',
+  },
+  detailItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 1,
+  },
+  detailLabel: {
+    fontSize: 11,
+    color: '#8B7E74',
+    fontWeight: 'bold',
+    width: 42,
+  },
+  detailText: {
+    fontSize: 11,
+    color: '#444',
+    flex: 1,
+    textAlign: 'right',
+  },
+  detailDivider: {
+    height: 1,
+    backgroundColor: '#E5C7A0',
+    marginVertical: 5,
+    opacity: 0.7,
   },
   sideButton: {
     width: 40,
@@ -215,54 +303,6 @@ const styles = StyleSheet.create({
     marginRight: 5,
     marginBottom: 2,
     color: '#3D3D3D'
-  },
-  participantCard: {
-    width: 112,
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 12,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
-    position: 'relative',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-  },
-  cardIcon: {
-    position: 'absolute',
-    top: 8,
-    left: 8,
-    zIndex: 2,
-  },
-  departmentBox: {
-    marginTop: 10,
-  },
-  participantDepartment: {
-    fontSize: 10,
-    fontWeight: '500',
-    textAlign: 'center',
-  },
-  detailsBox: {
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-    borderRadius: 6,
-    padding: 8,
-    marginTop: 8,
-    backgroundColor: '#FAF8F6'
-  },
-  detailItem: {
-    marginBottom: 6,
-  },
-  detailText: {
-    fontSize: 10,
-    color: '#444',
-  },
-  line: {
-    height: 1,
-    backgroundColor: '#D9D9D9',
-    marginVertical: 5,
   },
 });
 
