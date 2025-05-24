@@ -48,7 +48,7 @@ const Lounge: React.FC = () => {
     >
       <View style={styles.container}>
         {/* 헤더 */}
-        <Header title="커뮤니티" onNotificationPress={handleNotificationPress} />
+        <Header title="라운지" onNotificationPress={handleNotificationPress} />
 
         <ScrollView contentContainerStyle={styles.content}>
           <View style={styles.comment}>
