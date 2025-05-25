@@ -29,7 +29,7 @@ const Home: React.FC = () => {
   const [meetingRooms, setMeetingRooms] = useState<MeetingRoom[]>([
     {
       id: 1,
-      title: '기본 2:2',
+      title: 'HTML 스터디 모집합니다',
       participants: [
         {
           id: 1,
@@ -76,7 +76,7 @@ const Home: React.FC = () => {
     },
     {
       id: 2,
-      title: '3:3 방',
+      title: '토익 700점 목표',
       participants: [
         {
           id: 5,
@@ -143,7 +143,7 @@ const Home: React.FC = () => {
     },
     {
       id: 3,
-      title: '혼성방',
+      title: '자전거 타실분 ?',
       participants: [
         {
           id: 11,
