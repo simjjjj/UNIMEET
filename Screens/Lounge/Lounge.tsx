@@ -7,17 +7,21 @@ import { Ionicons } from '@expo/vector-icons';
 const dummyPosts = [
   {
     id: 1,
-    title: '오늘 점심 뭐 먹었어요?',
-    author: '홍길동',
+    title: '오늘 점메추좀',
+    text: '점심 메뉴를 도저히 못 고르겠어요',
+    author: '익명',
     date: '2025-05-24',
     comments: 4,
+    likes: 3,
   },
   {
     id: 2,
     title: '스터디 모집합니다! (React Native)',
-    author: '김영희',
+    text: '어플개발 고수 가보자',
+    author: '익명',
     date: '2025-05-23',
     comments: 2,
+    likes: 1,
   },
   {
     id: 3,
@@ -26,6 +30,7 @@ const dummyPosts = [
     date: '2025-05-22',
     comments: 0,
     notice: true,
+    likes: 0,
   },
 ];
 
@@ -48,7 +53,11 @@ const Lounge: React.FC = () => {
     >
       <View style={styles.container}>
         {/* 헤더 */}
-        <Header title="라운지" onNotificationPress={handleNotificationPress} />
+        <Header
+          title="라운지"
+          onNotificationPress={handleNotificationPress}
+          iconName="search"
+        />
 
         <ScrollView contentContainerStyle={styles.content}>
           <View style={styles.comment}>
@@ -63,11 +72,14 @@ const Lounge: React.FC = () => {
               .map(post => (
                 <View key={post.id} style={styles.postCard}>
                   <Text style={styles.postTitle}>{post.title}</Text>
+                  <Text style={styles.postText}>{post.text}</Text>
                   <View style={styles.postMeta}>
                     <Text style={styles.postAuthor}>{post.author}</Text>
                     <Text style={styles.postDate}>{post.date}</Text>
                     <Ionicons name="chatbubble-ellipses-outline" size={14} color="#B092FF" style={{ marginLeft: 8, marginRight: 2 }} />
                     <Text style={styles.postComments}>{post.comments}</Text>
+                    <Ionicons name="heart-outline" size={15} color="#FF6B81" style={{ marginLeft: 6, marginRight: 2 }} />
+                    <Text style={styles.postLikes}>{post.likes}</Text>
                   </View>
                 </View>
               ))}
@@ -141,9 +153,14 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   postTitle: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
     color: '#3D3D3D',
+    marginBottom: 7,
+  },
+  postText: {
+    color: '#606060',
+    fontSize: 13,
     marginBottom: 7,
   },
   postMeta: {
@@ -151,18 +168,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   postAuthor: {
-    fontSize: 12,
+    fontSize: 11,
     color: '#6846FF',
-    marginRight: 10,
+    marginRight: 5,
   },
   postDate: {
     fontSize: 11,
     color: '#AAA',
-    marginRight: 10,
   },
   postComments: {
-    fontSize: 12,
+    fontSize: 11,
     color: '#B092FF',
+    fontWeight: 'bold',
+  },
+  postLikes: {
+    fontSize: 11,
+    color: '#FF6B81',
     fontWeight: 'bold',
   },
   fab: {
