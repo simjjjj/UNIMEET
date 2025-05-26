@@ -16,8 +16,8 @@ const initialState = {
   friends: '0명',
   posts: '0개',
   comments: '0개',
-  matchings: '2회',
-  verified: '완료됨'
+  Prefer: '꺼짐',
+  nonPrefer: '꺼짐'
 };
 
 const profileSlice = createSlice({

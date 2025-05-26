@@ -10,7 +10,7 @@ const dummyPosts = [
     title: '오늘 점메추좀',
     text: '점심 메뉴를 도저히 못 고르겠어요',
     author: '익명',
-    date: '2025-05-24',
+    date: '1분전',
     comments: 4,
     likes: 3,
   },
@@ -19,12 +19,21 @@ const dummyPosts = [
     title: '스터디 모집합니다! (React Native)',
     text: '어플개발 고수 가보자',
     author: '익명',
-    date: '2025-05-23',
+    date: '27분전',
     comments: 2,
     likes: 1,
   },
   {
     id: 3,
+    title: '어제 보름달',
+    text: '어제 완전 보름달이고 날도 맑고 달도 밝았다던데 사진 찍으신 분 있으신가요 ㅜㅜ',
+    author: '익명',
+    date: '42분전',
+    comments: 8,
+    likes: 7,
+  },
+  {
+    id: 4,
     title: '자유게시판 이용규칙 안내',
     author: '운영자',
     date: '2025-05-22',
@@ -62,7 +71,7 @@ const Lounge: React.FC = () => {
         <ScrollView contentContainerStyle={styles.content}>
           <View style={styles.comment}>
             <Ionicons name="megaphone-outline" size={12} color="#3D3D3D" style={styles.icon} />
-            <Text style={styles.commentText}>커뮤니티 페이지입니다.</Text>
+            <Text style={styles.commentText}>비적절한 게시글, 댓글은 신고 대상입니다.</Text>
           </View>
 
           {/* 게시글 리스트 */}
@@ -145,12 +154,13 @@ const styles = StyleSheet.create({
   postCard: {
     backgroundColor: '#fff',
     borderRadius: 10,
-    padding: 14,
+    padding: 15,
     marginBottom: 14,
-    shadowColor: '#B092FF',
-    shadowOpacity: 0.08,
+    shadowColor: '#000',
+    shadowOffset: { width: 2, height: 3 },
+    shadowOpacity: 0.2,
     shadowRadius: 4,
-    elevation: 2,
+    elevation: 5,
   },
   postTitle: {
     fontSize: 14,

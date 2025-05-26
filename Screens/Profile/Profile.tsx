@@ -22,8 +22,8 @@ const Profile: React.FC = () => {
     { label: '나의 친구 목록', value: profile.friends, onPress: () => alert('친구 목록으로 이동') },
     { label: '내가 쓴 게시글', value: profile.posts, onPress: () => alert('게시글로 이동') },
     { label: '내가 쓴 댓글', value: profile.comments, onPress: () => alert('댓글로 이동') },
-    { label: '매칭 성공 수', value: profile.matchings, onPress: () => alert('매칭 내역으로 이동') },
-    { label: '학교 인증', value: profile.verified, onPress: () => alert('학교 인증 정보로 이동') },
+    { label: '선호하는 학과 설정', value: profile.Prefer, onPress: () => alert('선호하는 학과 설정 선택으로 이동') },
+    { label: '비 선호하는 학과 설정', value: profile.nonPrefer, onPress: () => alert('선호하는 학과 설정 선택으로 이동') },
   ];  
 
   return (
@@ -69,7 +69,7 @@ const Profile: React.FC = () => {
                   <View style={styles.infoValueRight}>
                     <Text style={styles.infoValue}>{item.value}</Text>
                     {isPressable && (
-                      <Ionicons name="chevron-forward" size={20} color="#bbb" style={{ marginLeft: 8 }} />
+                      <Ionicons name="chevron-forward" size={20} color="#bbb" />
                     )}
                   </View>
                 </View>
@@ -232,12 +232,13 @@ const styles = StyleSheet.create({
   },
   infoInterest: {
     fontSize: 12,
+    fontWeight: 'bold',
     color: '#FFFFFF',
-    backgroundColor: 'grey',
+    backgroundColor: '#6D6D6D',
     paddingTop: 7,
     paddingBottom: 7,
-    paddingLeft: 12,
-    paddingRight: 12,
+    paddingLeft: 14,
+    paddingRight: 14,
     borderRadius: 15,
     marginRight: 10,
     marginBottom: 10,
@@ -275,6 +276,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
     justifyContent: 'flex-end',
+    marginLeft: 15,
   },  
 });
 
