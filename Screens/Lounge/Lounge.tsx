@@ -128,7 +128,8 @@ const styles = StyleSheet.create({
   },
   content: {
     flexGrow: 1,
-    padding: 20,
+    padding: 10,
+    paddingHorizontal: 15,
     paddingBottom: 80,
   },
   noticeCard: {
