@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import type { RootStackParamList } from '../../navigation/types';
-import { LinearGradient } from 'expo-linear-gradient';
+import GradientScreen from '../../component/GradientScreen';
 
 const PostDetail: React.FC = () => {
   const navigation = useNavigation();
@@ -28,13 +28,7 @@ const PostDetail: React.FC = () => {
   }
 
   return (
-    <LinearGradient
-      colors={['#FF87DD', '#B092FF', '#DBD6EC', '#F0F0E9']}
-      locations={[0, 0.43, 0.71, 0.93]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 0, y: 0.35 }}
-      style={styles.container}
-    >
+    <GradientScreen>
     
     <View style={styles.container}>
         <View style={styles.header}>
@@ -45,12 +39,11 @@ const PostDetail: React.FC = () => {
                 <Text style={styles.title}>라운지</Text>
             </View>
             <TouchableOpacity onPress={() => alert('수정화면으로 이동')} style={styles.sideButton}>
-                <Ionicons name="create-outline" size={24} color="#fff" />
+                <Ionicons name="notifications-outline" size={24} color="#fff" />
             </TouchableOpacity>
         </View>
 
       <ScrollView contentContainerStyle={styles.content}>
-
         <View style={styles.comment}>
             <Ionicons name="megaphone-outline" size={12} color="#3D3D3D" style={styles.icon} />
             <Text style={styles.commentText}>비적절한 게시글, 댓글은 신고 대상입니다.</Text>
@@ -95,14 +88,14 @@ const PostDetail: React.FC = () => {
     </View>
 
     
-    </LinearGradient>
+    </GradientScreen>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 28,
+    paddingTop: 60,
   },
   comment: {
     width: '100%',
@@ -128,7 +121,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    marginBottom: 24,
+    marginBottom: 11,
     height: 48,
     position: 'relative',
   },
@@ -164,12 +157,9 @@ const styles = StyleSheet.create({
     elevation: 4, // Android
   },
   content: {
-    paddingTop: 10,
     paddingHorizontal: 15,
-    alignItems: 'center'
   },
   card: {
-    width: '92%',
     marginBottom: 18,
     shadowColor: '#B092FF',
     shadowOpacity: 0.13,
@@ -217,7 +207,7 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   commentSection: {
-    width: '92%',
+    width: '100%',
     backgroundColor: 'rgba(250,248,255,0.97)',
     borderRadius: 12,
     padding: 16,
