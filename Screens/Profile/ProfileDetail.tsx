@@ -2,9 +2,9 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
+import GradientScreen from '../../component/GradientScreen';
 
 const ProfileDetail: React.FC = () => {
   const navigation = useNavigation();
@@ -26,13 +26,7 @@ const ProfileDetail: React.FC = () => {
     ];
 
   return (
-    <LinearGradient
-      colors={['#FF87DD', '#B092FF', '#DBD6EC', '#F0F0E9']}
-      locations={[0, 0.43, 0.71, 0.93]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 0, y: 0.35 }}
-      style={styles.container}
-    >
+    <GradientScreen>
       <View style={styles.headerRow}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.sideButton}>
           <Ionicons name="arrow-back" size={25} color="#fff" />
@@ -79,14 +73,13 @@ const ProfileDetail: React.FC = () => {
             </View>
         </View>
       </ScrollView>
-    </LinearGradient>
+    </GradientScreen>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 60,
   },
   headerRow: {
     flexDirection: 'row',
@@ -96,6 +89,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     height: 48,
     position: 'relative',
+    marginTop: 60,
   },
   sideButton: {
     width: 40,
@@ -130,6 +124,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flexGrow: 1,
+    paddingHorizontal: 5,
     alignItems: 'center',
   },
   image: {

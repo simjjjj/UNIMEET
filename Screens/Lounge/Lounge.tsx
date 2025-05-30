@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
   content: {
     flexGrow: 1,
     padding: 10,
-    paddingHorizontal: 15,
+    paddingHorizontal: 20,
     paddingBottom: 80,
   },
   postList: {

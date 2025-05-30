@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Switch, TouchableOpacity, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
+import GradientScreen from '../../component/GradientScreen';
 
 const settingsList = [
   {
@@ -48,13 +48,7 @@ const Settings: React.FC = () => {
   const [isNotificationOn, setIsNotificationOn] = useState(true);
 
   return (
-    <LinearGradient
-      colors={['#FF87DD', '#B092FF', '#DBD6EC', '#F0F0E9']}
-      locations={[0, 0.43, 0.71, 0.93]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 0, y: 0.35 }}
-      style={styles.container}
-    >
+    <GradientScreen>
       <View style={styles.headerRow}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={25} color="#fff" />
@@ -102,7 +96,7 @@ const Settings: React.FC = () => {
           </View>
         ))}
       </View>
-    </LinearGradient>
+    </GradientScreen>
   );
 };
 
@@ -116,7 +110,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     height: 48,
     position: 'relative',
-    marginTop: 10,
+    marginTop: 60,
   },
   backButton: {
     padding: 8,

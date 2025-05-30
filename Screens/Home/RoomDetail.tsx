@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingTop: 10,
-    paddingHorizontal: 15,
+    paddingHorizontal: 20,
   },
   mainTitle: {
     fontSize: 18,

@@ -12,7 +12,7 @@ const GradientScreen: React.FC<GradientScreenProps> = ({ children, style }) => (
     colors={['#FF87DD', '#B092FF', '#DBD6EC', '#F0F0E9']}
     locations={[0, 0.43, 0.71, 0.93]}
     start={{ x: 0, y: 0 }}
-    end={{ x: 0, y: 0.30 }}
+    end={{ x: 0, y: 0.25 }}
     style={[styles.container, style]}
   >
     {children}

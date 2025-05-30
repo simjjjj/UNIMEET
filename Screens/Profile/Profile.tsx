@@ -112,6 +112,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flexGrow: 1,
+    paddingHorizontal: 5,
     justifyContent: 'center',
     alignItems: 'center',
   },

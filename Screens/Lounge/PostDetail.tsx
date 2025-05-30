@@ -29,7 +29,6 @@ const PostDetail: React.FC = () => {
 
   return (
     <GradientScreen>
-    
     <View style={styles.container}>
         <View style={styles.header}>
             <TouchableOpacity onPress={() => navigation.goBack()} style={styles.sideButton}>
@@ -157,7 +156,7 @@ const styles = StyleSheet.create({
     elevation: 4, // Android
   },
   content: {
-    paddingHorizontal: 15,
+    paddingHorizontal: 20,
   },
   card: {
     marginBottom: 18,
