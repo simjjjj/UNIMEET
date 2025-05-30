@@ -28,4 +28,5 @@ export type RootStackParamList = {
   BottomTabs: undefined;
   Settings: undefined;
   RoomDetail: { room: MeetingRoom };
+  PostDetail: { postId: number };
 };

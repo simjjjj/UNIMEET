@@ -1,13 +1,13 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native';
 import Header from '../../navigation/Header';
-import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import type { RootStackParamList } from '../../navigation/types';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import GradientScreen from '../../component/GradientScreen';
 
 const Profile: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -27,13 +27,7 @@ const Profile: React.FC = () => {
   ];  
 
   return (
-    <LinearGradient
-      colors={['#FF87DD', '#B092FF', '#DBD6EC', '#F0F0E9']}
-      locations={[0, 0.43, 0.71, 0.93]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 0, y: 0.35 }}
-      style={styles.container}
-    >
+    <GradientScreen>
       <View style={styles.container}>
         <Header
           title="마이페이지"
@@ -108,7 +102,7 @@ const Profile: React.FC = () => {
           </View>
         </ScrollView>
       </View>
-    </LinearGradient>
+    </GradientScreen>
   );
 };
 

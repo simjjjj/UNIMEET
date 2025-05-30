@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import Header from '../../navigation/Header';
-import { LinearGradient } from 'expo-linear-gradient';
+import GradientScreen from '../../component/GradientScreen';
 
 const Meeting :React.FC = () => {
   const handleNotificationPress = () => {
@@ -10,13 +10,7 @@ const Meeting :React.FC = () => {
 
   return (
 
-    <LinearGradient
-        colors={['#FF87DD', '#B092FF', '#DBD6EC', '#F0F0E9']}
-        locations={[0, 0.43, 0.71, 0.93]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 0, y: 0.35 }}
-        style={styles.container}
-        >
+    <GradientScreen>
         
         <View style={styles.container}>
             {/* 헤더 */}
@@ -27,7 +21,7 @@ const Meeting :React.FC = () => {
             </ScrollView>
         </View>
 
-    </LinearGradient>
+    </GradientScreen>
     
     
   );

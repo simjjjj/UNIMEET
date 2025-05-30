@@ -77,7 +77,6 @@ const RoomDetail: React.FC = () => {
       locations={[0, 0.43, 0.71, 0.93]}
       start={{ x: 0, y: 0 }}
       end={{ x: 0, y: 0.35 }}
-      style={styles.container}
     >
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.sideButton}>
