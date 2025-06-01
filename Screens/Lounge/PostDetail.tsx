@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform } from 'react-native';
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, Entypo } from '@expo/vector-icons';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import type { RootStackParamList } from '../../navigation/types';
@@ -12,81 +12,122 @@ const PostDetail: React.FC = () => {
   const route = useRoute<RouteProp<RootStackParamList, 'PostDetail'>>();
   const { postId } = route.params;
 
+  // 임시 댓글 데이터
+  const dummyComments = [
+    {
+      id: 1,
+      author: '익명1',
+      text: '좋은 정보 감사합니다!',
+      date: '2분 전',
+      likes: 2,
+    },
+    {
+      id: 2,
+      author: '익명2',
+      text: '저도 궁금했어요~',
+      date: '1분 전',
+      likes: 0,
+    },
+  ];
+
   const post = useSelector((state: RootState) =>
     state.posts.find(p => p.id === postId)
   );
 
   if (!post) {
     return (
-        <View style={[styles.centered, { flex: 1 }]}>
-          <TouchableOpacity style={styles.sideButton} onPress={() => navigation.goBack()}>
-            <Ionicons name="arrow-back" size={24} color="#6846FF" />
-          </TouchableOpacity>
-          <Text>게시글을 찾을 수 없습니다.</Text>
-        </View>
+      <View style={[styles.centered, { flex: 1 }]}>
+        <TouchableOpacity style={styles.sideButton} onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={24} color="#6846FF" />
+        </TouchableOpacity>
+        <Text>게시글을 찾을 수 없습니다.</Text>
+      </View>
     );
   }
 
   return (
     <GradientScreen>
-    <View style={styles.container}>
+      <View style={styles.container}>
+        {/* 헤더 */}
         <View style={styles.header}>
-            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.sideButton}>
-                <Ionicons name="arrow-back" size={25} color="#fff" />
-            </TouchableOpacity>
-            <View style={styles.titleBox}>
-                <Text style={styles.title}>라운지</Text>
-            </View>
-            <TouchableOpacity onPress={() => alert('수정화면으로 이동')} style={styles.sideButton}>
-                <Ionicons name="notifications-outline" size={24} color="#fff" />
-            </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.sideButton}>
+            <Ionicons name="arrow-back" size={25} color="#fff" />
+          </TouchableOpacity>
+          <View style={styles.titleBox}>
+            <Text style={styles.title}>라운지</Text>
+          </View>
+          <TouchableOpacity onPress={() => alert('더보기')} style={styles.sideButton}>
+            <Entypo name="dots-three-horizontal" size={22} color="#fff" />
+          </TouchableOpacity>
         </View>
 
-      <ScrollView contentContainerStyle={styles.content}>
+        <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.comment}>
             <Ionicons name="megaphone-outline" size={12} color="#3D3D3D" style={styles.icon} />
             <Text style={styles.commentText}>비적절한 게시글, 댓글은 신고 대상입니다.</Text>
         </View>
-
-        <View style={styles.card}>
-          <View style={styles.metaRow}>
-            <Ionicons name="person-circle" size={40} color="#D8D8D8" style={{ marginRight: 3 }} />
-            <Text style={styles.author}>{post.author}</Text>
-            <Text style={styles.date}>{post.date}</Text>
-            <Ionicons name="chatbubble-ellipses-outline" size={15} color="#B092FF" style={{ marginLeft: 12, marginRight: 2 }} />
-            <Text style={styles.comments}>{post.comments}</Text>
-            <Ionicons name="heart-outline" size={15} color="#FF6B81" style={{ marginLeft: 10, marginRight: 2 }} />
-            <Text style={styles.likes}>{post.likes}</Text>
-          </View>
-          <Text style={styles.postTitle}>{post.title}</Text>
-          <Text style={styles.text}>{post.text}</Text>
-        </View>
-
-        {/* 댓글 영역 (더미) */}
-        <View style={styles.commentSection}>
-          <Text style={styles.commentSectionTitle}>댓글</Text>
-          <View style={styles.commentDivider} />
-          <View style={styles.commentItem}>
-            <Ionicons name="person-circle-outline" size={18} color="#B092FF" style={{ marginRight: 5 }} />
-            <View>
-              <Text style={styles.commentAuthor}>익명</Text>
-              <Text style={styles.comment1}>좋은 정보 감사합니다!</Text>
+          {/* 게시글 카드 */}
+          <View style={styles.card}>
+            {/* 작성자/날짜/더보기 */}
+            <View style={styles.metaRow}>
+              <Ionicons name="person-circle" size={32} color="#B1B1B1" style={{ marginRight: 8 }} />
+              <View style={{ flex: 1 }}>
+                <Text style={styles.author}>{post.author}</Text>
+                <Text style={styles.date}>{post.date}</Text>
+              </View>
+              <TouchableOpacity onPress={() => alert('더보기')}>
+                <Entypo name="dots-three-horizontal" size={18} color="#B1B1B1" />
+              </TouchableOpacity>
+            </View>
+            {/* 제목 */}
+            <Text style={styles.postTitle}>{post.title}</Text>
+            {/* 본문 */}
+            <Text style={styles.text}>{post.text}</Text>
+            {/* 액션바 */}
+            <View style={styles.actionBar}>
+              <TouchableOpacity style={styles.actionBtn}>
+                <Ionicons name="heart-outline" size={18} color="#FF6B81" />
+                <Text style={styles.actionText}>{post.likes}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.actionBtn}>
+                <Ionicons name="chatbubble-ellipses-outline" size={18} color="#B092FF" />
+                <Text style={styles.actionText}>{post.comments}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.actionBtn}>
+                <Ionicons name="share-social-outline" size={18} color="#B1B1B1" />
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.actionBtn}>
+                <Ionicons name="bookmark-outline" size={18} color="#B1B1B1" />
+              </TouchableOpacity>
             </View>
           </View>
-          <View style={styles.commentDivider} />
-          <View style={styles.commentItem}>
-            <Ionicons name="person-circle-outline" size={18} color="#B092FF" style={{ marginRight: 5 }} />
-            <View>
-              <Text style={styles.commentAuthor}>익명</Text>
-              <Text style={styles.comment1}>저도 궁금했어요~</Text>
-            </View>
-          </View>
-        </View>
-      </ScrollView>
-        
-    </View>
 
-    
+          {/* 댓글 영역 */}
+          <View style={styles.commentSection}>
+            <Text style={styles.commentSectionTitle}>댓글 {dummyComments.length}</Text>
+            <View style={styles.commentDivider} />
+            {dummyComments.map(comment => (
+              <React.Fragment key={comment.id}>
+                <View style={styles.commentItem}>
+                  <Ionicons name="person-circle-outline" size={22} color="#B092FF" style={{ marginRight: 8 }} />
+                  <View style={{ flex: 1 }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 2 }}>
+                      <Text style={styles.commentAuthor}>{comment.author}</Text>
+                      <Text style={styles.commentDate}>{comment.date}</Text>
+                    </View>
+                    <Text style={styles.comment1}>{comment.text}</Text>
+                  </View>
+                  <TouchableOpacity style={styles.commentLikeBtn}>
+                    <Ionicons name="heart-outline" size={15} color="#FF6B81" />
+                    <Text style={styles.commentLikeText}>{comment.likes}</Text>
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.commentDivider} />
+              </React.Fragment>
+            ))}
+          </View>
+        </ScrollView>
+      </View>
     </GradientScreen>
   );
 };
@@ -95,25 +136,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 60,
-  },
-  comment: {
-    width: '100%',
-    height: 28,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 10,
-    flexDirection: 'row',
-  },
-  commentText: {
-    fontSize: 11,
-    color: '#3D3D3D',
-  },
-  icon: {
-    marginRight: 5,
-    marginBottom: 2,
-    color: '#3D3D3D',
   },
   header: {
     flexDirection: 'row',
@@ -153,12 +175,16 @@ const styles = StyleSheet.create({
     textShadowColor: '#000',
     textShadowOffset: { width: 1, height: 2 },
     textShadowRadius: 4,
-    elevation: 4, // Android
+    elevation: 4,
   },
   content: {
     paddingHorizontal: 20,
+    paddingBottom: 30,
   },
   card: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 18,
     marginBottom: 18,
     shadowColor: '#B092FF',
     shadowOpacity: 0.13,
@@ -166,50 +192,61 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     elevation: 5,
   },
-  postTitle: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#2C2C2C',
-    marginBottom: 12,
-    marginTop: 12,
-    letterSpacing: 0.2,
-  },
   metaRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    flexWrap: 'wrap',
+    marginBottom: 10,
   },
   author: {
     fontSize: 13,
     color: '#2C2C2C',
-    marginRight: 10,
-    fontWeight: '500',
+    fontWeight: '600',
   },
   date: {
     fontSize: 11,
     color: '#AAA',
-    marginRight: 8,
+    marginTop: 2,
   },
-  comments: {
-    fontSize: 12,
-    color: '#B092FF',
+  postTitle: {
+    fontSize: 17,
     fontWeight: 'bold',
-  },
-  likes: {
-    fontSize: 12,
-    color: '#FF6B81',
-    fontWeight: 'bold',
+    color: '#222',
+    marginBottom: 10,
+    marginTop: 4,
+    letterSpacing: 0.2,
   },
   text: {
     fontSize: 15,
     color: '#444',
     lineHeight: 22,
+    marginBottom: 16,
+  },
+  actionBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 2,
+    borderTopWidth: 1,
+    borderTopColor: '#F2E3FF',
+    paddingTop: 7,
+    justifyContent: 'flex-start',
+  },
+  actionBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: 18,
+    paddingVertical: 2,
+  },
+  actionText: {
+    fontSize: 13,
+    color: '#444',
+    marginLeft: 3,
+    fontWeight: '500',
   },
   commentSection: {
     width: '100%',
-    backgroundColor: 'rgba(250,248,255,0.97)',
-    borderRadius: 12,
-    padding: 16,
+    backgroundColor: '#F9F8FF',
+    borderRadius: 13,
+    padding: 14,
     marginBottom: 20,
     alignSelf: 'center',
     shadowColor: '#B092FF',
@@ -237,18 +274,58 @@ const styles = StyleSheet.create({
   },
   commentAuthor: {
     fontSize: 12,
-    color: '#6846FF',
+    color: '#2C2C2C',
     fontWeight: '600',
+    marginRight: 8,
+  },
+  commentDate: {
+    fontSize: 11,
+    color: '#AAA',
+    marginTop: 2,
   },
   comment1: {
     fontSize: 13,
     color: '#444',
     marginTop: 2,
   },
+  commentLikeBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 10,
+    paddingVertical: 2,
+  },
+  commentLikeText: {
+    fontSize: 11,
+    color: '#FF6B81',
+    marginLeft: 2,
+    fontWeight: 'bold',
+  },
   centered: {
     alignItems: 'center',
     justifyContent: 'center',
   },
+  comment: {
+    width: '100%',
+    height: 28,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 5,
+    marginBottom: 20,
+    flexDirection: 'row',
+  },
+  commentText: {
+    fontSize: 11,
+    color: '#3D3D3D',
+  },
+
+  icon: {
+    marginRight: 5,
+    marginBottom: 2,
+    color: '#3D3D3D',
+  },
 });
 
 export default PostDetail;
+
