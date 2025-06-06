@@ -143,7 +143,7 @@ const Home: React.FC = () => {
     },
     {
       id: 3,
-      title: '자전거 타실분 ?',
+      title: '남녀 상관없는 혼성방',
       participants: [
         {
           id: 11,
