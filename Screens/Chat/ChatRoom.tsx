@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Modal } from 'react-native';
+import { Ionicons, Entypo } from '@expo/vector-icons';
 import GradientScreen from '../../component/GradientScreen';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
@@ -8,15 +8,14 @@ import { RootState } from '../../store';
 import type { RootStackParamList } from '../../navigation/types';
 
 const dummyMessages = [
-  { id: 1, text: '안녕하세요!', mine: false, time: '오후 2:01' },
-  { id: 2, text: '안녕하세요~', mine: true, time: '오후 2:01' },
-  { id: 3, text: 'React Native 스터디 내일 7시에 만나요!', mine: false, time: '오후 2:02' },
-  { id: 4, text: '네! 장소는 어디에요?', mine: true, time: '오후 2:02' },
+  { id: 1, text: '안녕하세요!', mine: false, time: '오후 2:01', nickname: '익명1', avatar: 'person-circle-outline' },
+  { id: 2, text: '안녕하세요~', mine: true, time: '오후 2:01', nickname: '나', avatar: 'person-circle' },
+  { id: 3, text: 'React Native 스터디 내일 7시에 만나요!', mine: false, time: '오후 2:02', nickname: '익명1', avatar: 'person-circle-outline' },
+  { id: 4, text: '네! 장소는 어디에요?', mine: true, time: '오후 2:02', nickname: '나', avatar: 'person-circle' },
 ];
 
 const ChatRoom: React.FC = () => {
   const navigation = useNavigation();
-  // 타입 명확히 지정
   const route = useRoute<RouteProp<RootStackParamList, 'ChatRoom'>>();
   const { roomId } = route.params;
 
@@ -27,13 +26,21 @@ const ChatRoom: React.FC = () => {
 
   const [messages, setMessages] = useState(dummyMessages);
   const [input, setInput] = useState('');
+  const [showPanel, setShowPanel] = useState(false);
   const scrollRef = useRef<ScrollView>(null);
 
   const handleSend = () => {
     if (!input.trim()) return;
     setMessages([
       ...messages,
-      { id: messages.length + 1, text: input, mine: true, time: '오후 2:03' },
+      {
+        id: messages.length + 1,
+        text: input,
+        mine: true,
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        nickname: '나',
+        avatar: 'person-circle',
+      },
     ]);
     setInput('');
     setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 100);
@@ -42,24 +49,36 @@ const ChatRoom: React.FC = () => {
   return (
     <GradientScreen>
       <View style={chatStyles.header}>
-        <TouchableOpacity style={chatStyles.sideButton} onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={25} color="#fff" />
-        </TouchableOpacity>
-        <View style={chatStyles.titleBox}>
-          <Text style={chatStyles.title}>{room?.name || '채팅방'}</Text>
+        <View style={chatStyles.leftBox}>
+          <TouchableOpacity style={chatStyles.sideButton} onPress={() => navigation.goBack()}>
+            <Ionicons name="arrow-back" size={25} color="#fff" />
+          </TouchableOpacity>
         </View>
-        <View style={{ width: 40 }} />
+        <View style={chatStyles.titleBox}>
+          <Text style={chatStyles.title} numberOfLines={1}>
+            {room?.name || '채팅방'}
+          </Text>
+        </View>
+        <View style={chatStyles.rightIcons}>
+          <TouchableOpacity style={chatStyles.iconBtn} onPress={() => alert('검색')}>
+            <Ionicons name="search" size={22} color="#fff" />
+          </TouchableOpacity>
+          <TouchableOpacity style={chatStyles.iconBtn} onPress={() => alert('메뉴')}>
+            <Entypo name="menu" size={22} color="#fff" />
+          </TouchableOpacity>
+        </View>
       </View>
 
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 70 : 0}
+        keyboardVerticalOffset={0}
       >
         <ScrollView
           ref={scrollRef}
           contentContainerStyle={chatStyles.messages}
           showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
           onContentSizeChange={() => scrollRef.current?.scrollToEnd({ animated: true })}
         >
           {messages.map(msg => (
@@ -70,25 +89,86 @@ const ChatRoom: React.FC = () => {
                 msg.mine ? chatStyles.myRow : chatStyles.otherRow,
               ]}
             >
-              <View style={[chatStyles.bubble, msg.mine ? chatStyles.myBubble : chatStyles.otherBubble]}>
-                <Text style={chatStyles.bubbleText}>{msg.text}</Text>
-                <Text style={chatStyles.bubbleTime}>{msg.time}</Text>
+              {!msg.mine && (
+                <Ionicons
+                  name={msg.avatar}
+                  size={28}
+                  color="#B092FF"
+                  style={chatStyles.avatarIcon}
+                />
+              )}
+              <View style={{ flex: 1, maxWidth: '80%' }}>
+                {/* 닉네임 */}
+                <Text
+                  style={[
+                    chatStyles.nickname,
+                    msg.mine ? chatStyles.myNickname : chatStyles.otherNickname,
+                  ]}
+                >
+                  {msg.nickname}
+                </Text>
+                {/* 채팅 버블 */}
+                <View style={[chatStyles.bubble, msg.mine ? chatStyles.myBubble : chatStyles.otherBubble]}>
+                  <Text style={chatStyles.bubbleText}>{msg.text}</Text>
+                </View>
+                {/* 시간 */}
+                <Text
+                  style={[
+                    chatStyles.bubbleTime,
+                    msg.mine ? chatStyles.myTime : chatStyles.otherTime,
+                  ]}
+                >
+                  {msg.time}
+                </Text>
               </View>
+              {msg.mine && (
+                <Ionicons
+                  name={msg.avatar}
+                  size={28}
+                  color="#6846FF"
+                  style={chatStyles.avatarIcon}
+                />
+              )}
             </View>
           ))}
         </ScrollView>
         <View style={chatStyles.inputBar}>
+          <TouchableOpacity style={chatStyles.plusBtn} onPress={() => setShowPanel(true)}>
+            <Ionicons name="add" size={24} color="#6846FF" />
+          </TouchableOpacity>
           <TextInput
             style={chatStyles.input}
             value={input}
             onChangeText={setInput}
             placeholder="메시지를 입력하세요"
             placeholderTextColor="#AAA"
+            returnKeyType="send"
+            onSubmitEditing={handleSend}
           />
           <TouchableOpacity style={chatStyles.sendBtn} onPress={handleSend}>
             <Ionicons name="send" size={20} color="#fff" />
           </TouchableOpacity>
         </View>
+
+        {/* 아래에서 올라오는 패널 */}
+        <Modal
+          visible={showPanel}
+          animationType="slide"
+          transparent
+          onRequestClose={() => setShowPanel(false)}
+        >
+          <TouchableOpacity style={chatStyles.overlay} activeOpacity={1} onPress={() => setShowPanel(false)} />
+          <View style={chatStyles.bottomPanel}>
+            <TouchableOpacity style={chatStyles.panelBtn} onPress={() => { setShowPanel(false); alert('사진 선택'); }}>
+              <Ionicons name="image-outline" size={28} color="#6846FF" />
+              <Text style={chatStyles.panelBtnText}>사진</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={chatStyles.panelBtn} onPress={() => { setShowPanel(false); alert('통화 시작'); }}>
+              <Ionicons name="call-outline" size={28} color="#6846FF" />
+              <Text style={chatStyles.panelBtnText}>통화</Text>
+            </TouchableOpacity>
+          </View>
+        </Modal>
       </KeyboardAvoidingView>
     </GradientScreen>
   );
@@ -98,12 +178,17 @@ const chatStyles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    marginBottom: 11,
     height: 48,
-    position: 'relative',
     marginTop: 60,
+    marginBottom: 11,
+    paddingHorizontal: 8,
+    position: 'relative',
+  },
+  leftBox: {
+    width: 80,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
   },
   sideButton: {
     width: 40,
@@ -112,31 +197,42 @@ const chatStyles = StyleSheet.create({
     zIndex: 2,
   },
   titleBox: {
-    height: 48,
-    justifyContent: 'center',
-    alignItems: 'flex-start', // 왼쪽 정렬
-    paddingLeft: 0,
     flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 8,
   },
   title: {
     fontSize: 17,
     fontWeight: '600',
     color: 'white',
-    textAlign: 'left',
+    textAlign: 'center',
     textShadowColor: '#000',
     textShadowOffset: { width: 1, height: 2 },
     textShadowRadius: 4,
     elevation: 4,
+    maxWidth: '100%',
+  },
+  rightIcons: {
+    width: 80,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+  },
+  iconBtn: {
+    paddingHorizontal: 6,
+    paddingVertical: 6,
   },
   messages: {
     flexGrow: 1,
     justifyContent: 'flex-end',
-    padding: 16,
-    paddingBottom: 8,
+    padding: 12,
+    paddingBottom: 0,
   },
   messageRow: {
     flexDirection: 'row',
-    marginBottom: 10,
+    alignItems: 'flex-end',
+    marginBottom: 8,
   },
   myRow: {
     justifyContent: 'flex-end',
@@ -144,12 +240,31 @@ const chatStyles = StyleSheet.create({
   otherRow: {
     justifyContent: 'flex-start',
   },
+  avatarIcon: {
+    marginHorizontal: 4,
+    marginBottom: 2,
+  },
+  nickname: {
+    fontSize: 11,
+    marginBottom: 2,
+    marginLeft: 2,
+    marginRight: 2,
+    fontWeight: '600',
+  },
+  myNickname: {
+    color: '#6846FF',
+    textAlign: 'right',
+  },
+  otherNickname: {
+    color: '#B092FF',
+    textAlign: 'left',
+  },
   bubble: {
-    maxWidth: '75%',
+    maxWidth: '100%',
     borderRadius: 18,
     paddingVertical: 10,
     paddingHorizontal: 14,
-    marginHorizontal: 4,
+    marginHorizontal: 0,
     shadowColor: '#B092FF',
     shadowOpacity: 0.08,
     shadowRadius: 3,
@@ -170,22 +285,34 @@ const chatStyles = StyleSheet.create({
   bubbleTime: {
     fontSize: 10,
     color: '#AAA',
-    alignSelf: 'flex-end',
-    marginTop: 4,
+    marginTop: 2,
+    marginLeft: 2,
+    marginRight: 2,
+  },
+  myTime: {
+    textAlign: 'right',
+  },
+  otherTime: {
+    textAlign: 'left',
   },
   inputBar: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#fff',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
     borderTopWidth: 1,
     borderTopColor: '#EEE',
+    marginBottom: 0,
+  },
+  plusBtn: {
+    marginRight: 8,
+    padding: 4,
   },
   input: {
     flex: 1,
     fontSize: 15,
-    paddingVertical: 6,
+    paddingVertical: 8,
     paddingHorizontal: 12,
     backgroundColor: '#F8F8F8',
     borderRadius: 18,
@@ -198,6 +325,38 @@ const chatStyles = StyleSheet.create({
     padding: 8,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.25)',
+  },
+  bottomPanel: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 18,
+    borderTopRightRadius: 18,
+    paddingVertical: 24,
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    elevation: 10,
+    shadowColor: '#6846FF',
+    shadowOpacity: 0.09,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: -3 },
+  },
+  panelBtn: {
+    alignItems: 'center',
+    marginHorizontal: 24,
+  },
+  panelBtnText: {
+    marginTop: 6,
+    fontSize: 14,
+    color: '#6846FF',
+    fontWeight: 'bold',
   },
 });
 
