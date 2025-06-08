@@ -41,9 +41,6 @@ const ChatList: React.FC = () => {
   return (
     <GradientScreen>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.sideButton} onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={25} color="#fff" />
-        </TouchableOpacity>
         <View style={styles.titleBox}>
           <Text style={styles.title}>채팅</Text>
         </View>
