@@ -3,6 +3,15 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-nati
 import GradientScreen from '../../component/GradientScreen';
 import { Ionicons, Entypo } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../../navigation/types';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store';
+import Header from '../../navigation/Header';
+
+const handleNotificationPress = () => {
+  alert('채팅에서 알림을 눌렀습니다!');
+};
 
 const dummyRooms = [
   {
@@ -31,23 +40,22 @@ const dummyRooms = [
   },
 ];
 
-const ChatList: React.FC = () => {
-  const navigation = useNavigation();
+const Chat: React.FC = () => {
+
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const chats = useSelector((state: RootState) => state.chats);
 
   const handleRoomPress = (roomId: number) => {
-    navigation.navigate('ChatRoom', { roomId }); // 상세 채팅방 이동 (예시)
+    navigation.navigate('ChatRoom', { roomId });
   };
 
   return (
     <GradientScreen>
-      <View style={styles.header}>
-        <View style={styles.titleBox}>
-          <Text style={styles.title}>채팅</Text>
-        </View>
-        <TouchableOpacity style={styles.sideButton} onPress={() => alert('더보기')}>
-          <Entypo name="dots-three-horizontal" size={22} color="#fff" />
-        </TouchableOpacity>
-      </View>
+      <Header
+          title="채팅"
+          onNotificationPress={handleNotificationPress}
+          iconName="notifications-outline"
+        />
 
       <ScrollView contentContainerStyle={styles.content}>
         {dummyRooms.map(room => (
@@ -185,4 +193,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ChatList;
+export default Chat;

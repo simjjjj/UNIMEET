@@ -29,4 +29,7 @@ export type RootStackParamList = {
   Settings: undefined;
   RoomDetail: { room: MeetingRoom };
   PostDetail: { postId: number };
+  ChatRoom: { roomId: number };
 };
+
+

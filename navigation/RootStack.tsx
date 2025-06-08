@@ -5,6 +5,8 @@ import Settings from '../Screens/Profile/Settings';
 import RoomDetail from '../Screens/Home/RoomDetail';
 import Lounge from '../Screens/Lounge/Lounge';
 import PostDetail from '../Screens/Lounge/PostDetail';
+import Chat from '../Screens/Chat/Chat';
+import ChatRoom from '../Screens/Chat/ChatRoom';
 import type { RootStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -18,6 +20,8 @@ export default function RootStack() {
       <Stack.Screen name="Settings" component={Settings} />
       <Stack.Screen name="Lounge" component={Lounge} />
       <Stack.Screen name="PostDetail" component={PostDetail} />
+      <Stack.Screen name="Chat" component={Chat} />
+      <Stack.Screen name="ChatRoom" component={ChatRoom} />
     </Stack.Navigator>
   );
 }
