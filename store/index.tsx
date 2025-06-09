@@ -1,7 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import profileReducer from './profileSlice';
 import postsReducer from './postsSlice';
-import chatsReducer from './ChatsSlice'
+import chatsReducer from './ChatsSlice';
 
 export const store = configureStore({
   reducer: {

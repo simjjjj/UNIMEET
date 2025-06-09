@@ -7,11 +7,21 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import type { RootStackParamList } from '../../navigation/types';
 
-const dummyMessages = [
-  { id: 1, text: '안녕하세요!', mine: false, time: '오후 2:01', nickname: '익명1', avatar: 'person-circle-outline' },
-  { id: 2, text: '안녕하세요~', mine: true, time: '오후 2:01', nickname: '나', avatar: 'person-circle' },
-  { id: 3, text: 'React Native 스터디 내일 7시에 만나요!', mine: false, time: '오후 2:02', nickname: '익명1', avatar: 'person-circle-outline' },
-  { id: 4, text: '네! 장소는 어디에요?', mine: true, time: '오후 2:02', nickname: '나', avatar: 'person-circle' },
+type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
+
+const dummyMessages: {
+    id: number;
+    text: string;
+    mine: boolean;
+    time: string;
+    nickname: string;
+    avatar: IoniconName;
+    readCount?: number;
+  }[] = [
+    { id: 1, text: '안녕하세요!', mine: false, time: '오후 2:01', nickname: '익명1', avatar: 'person-circle-outline', readCount: 2 },
+    { id: 2, text: '안녕하세요~', mine: true, time: '오후 2:01', nickname: '나', avatar: 'person-circle', readCount: 1 },
+    { id: 3, text: 'React Native 스터디 내일 7시에 만나요!', mine: false, time: '오후 2:02', nickname: '익명1', avatar: 'person-circle-outline', readCount: 2 },
+    { id: 4, text: '네! 장소는 어디에요?', mine: true, time: '오후 2:02', nickname: '나', avatar: 'person-circle', readCount: 2 },
 ];
 
 const ChatRoom: React.FC = () => {
@@ -48,22 +58,22 @@ const ChatRoom: React.FC = () => {
 
   return (
     <GradientScreen>
-      <View style={chatStyles.header}>
-        <View style={chatStyles.leftBox}>
-          <TouchableOpacity style={chatStyles.sideButton} onPress={() => navigation.goBack()}>
+      <View style={styles.header}>
+        <View style={styles.leftBox}>
+          <TouchableOpacity style={styles.sideButton} onPress={() => navigation.goBack()}>
             <Ionicons name="arrow-back" size={25} color="#fff" />
           </TouchableOpacity>
         </View>
-        <View style={chatStyles.titleBox}>
-          <Text style={chatStyles.title} numberOfLines={1}>
+        <View style={styles.titleBox}>
+          <Text style={styles.title} numberOfLines={1}>
             {room?.name || '채팅방'}
           </Text>
         </View>
-        <View style={chatStyles.rightIcons}>
-          <TouchableOpacity style={chatStyles.iconBtn} onPress={() => alert('검색')}>
+        <View style={styles.rightIcons}>
+          <TouchableOpacity style={styles.iconBtn} onPress={() => alert('검색')}>
             <Ionicons name="search" size={22} color="#fff" />
           </TouchableOpacity>
-          <TouchableOpacity style={chatStyles.iconBtn} onPress={() => alert('메뉴')}>
+          <TouchableOpacity style={styles.iconBtn} onPress={() => alert('메뉴')}>
             <Entypo name="menu" size={22} color="#fff" />
           </TouchableOpacity>
         </View>
@@ -76,7 +86,7 @@ const ChatRoom: React.FC = () => {
       >
         <ScrollView
           ref={scrollRef}
-          contentContainerStyle={chatStyles.messages}
+          contentContainerStyle={styles.messages}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
           onContentSizeChange={() => scrollRef.current?.scrollToEnd({ animated: true })}
@@ -85,59 +95,50 @@ const ChatRoom: React.FC = () => {
             <View
               key={msg.id}
               style={[
-                chatStyles.messageRow,
-                msg.mine ? chatStyles.myRow : chatStyles.otherRow,
+                styles.messageRow,
+                msg.mine ? styles.myRow : styles.otherRow,
               ]}
             >
+              {/* 상대 메시지: 아이콘, 닉네임 왼쪽 */}
               {!msg.mine && (
                 <Ionicons
                   name={msg.avatar}
-                  size={28}
+                  size={35}
                   color="#B092FF"
-                  style={chatStyles.avatarIcon}
+                  style={styles.avatarIcon}
                 />
               )}
               <View style={{ flex: 1, maxWidth: '80%' }}>
-                {/* 닉네임 */}
-                <Text
-                  style={[
-                    chatStyles.nickname,
-                    msg.mine ? chatStyles.myNickname : chatStyles.otherNickname,
-                  ]}
-                >
-                  {msg.nickname}
-                </Text>
-                {/* 채팅 버블 */}
-                <View style={[chatStyles.bubble, msg.mine ? chatStyles.myBubble : chatStyles.otherBubble]}>
-                  <Text style={chatStyles.bubbleText}>{msg.text}</Text>
+                {/* 상대 메시지: 닉네임 */}
+                {!msg.mine && (
+                  <Text style={[styles.nickname, styles.otherNickname]}>
+                    {msg.nickname}
+                  </Text>
+                )}
+                <View style={[styles.bubbleRow, msg.mine ? { flexDirection: 'row-reverse' } : {}]}>
+                  <View style={[styles.bubble, msg.mine ? styles.myBubble : styles.otherBubble]}>
+                    <Text style={styles.bubbleText}>{msg.text}</Text>
+                  </View>
+                  {/* 시간: 내 메시지면 왼쪽, 상대 메시지면 오른쪽 */}
+                  <Text
+                    style={[
+                      styles.bubbleTime,
+                      msg.mine ? styles.myTime : styles.otherTime,
+                    ]}
+                  >
+                    {msg.time}
+                  </Text>
                 </View>
-                {/* 시간 */}
-                <Text
-                  style={[
-                    chatStyles.bubbleTime,
-                    msg.mine ? chatStyles.myTime : chatStyles.otherTime,
-                  ]}
-                >
-                  {msg.time}
-                </Text>
               </View>
-              {msg.mine && (
-                <Ionicons
-                  name={msg.avatar}
-                  size={28}
-                  color="#6846FF"
-                  style={chatStyles.avatarIcon}
-                />
-              )}
             </View>
           ))}
         </ScrollView>
-        <View style={chatStyles.inputBar}>
-          <TouchableOpacity style={chatStyles.plusBtn} onPress={() => setShowPanel(true)}>
+        <View style={styles.inputBar}>
+          <TouchableOpacity style={styles.plusBtn} onPress={() => setShowPanel(true)}>
             <Ionicons name="add" size={24} color="#6846FF" />
           </TouchableOpacity>
           <TextInput
-            style={chatStyles.input}
+            style={styles.input}
             value={input}
             onChangeText={setInput}
             placeholder="메시지를 입력하세요"
@@ -145,7 +146,7 @@ const ChatRoom: React.FC = () => {
             returnKeyType="send"
             onSubmitEditing={handleSend}
           />
-          <TouchableOpacity style={chatStyles.sendBtn} onPress={handleSend}>
+          <TouchableOpacity style={styles.sendBtn} onPress={handleSend}>
             <Ionicons name="send" size={20} color="#fff" />
           </TouchableOpacity>
         </View>
@@ -157,15 +158,15 @@ const ChatRoom: React.FC = () => {
           transparent
           onRequestClose={() => setShowPanel(false)}
         >
-          <TouchableOpacity style={chatStyles.overlay} activeOpacity={1} onPress={() => setShowPanel(false)} />
-          <View style={chatStyles.bottomPanel}>
-            <TouchableOpacity style={chatStyles.panelBtn} onPress={() => { setShowPanel(false); alert('사진 선택'); }}>
+          <TouchableOpacity style={styles.overlay} activeOpacity={1} onPress={() => setShowPanel(false)} />
+          <View style={styles.bottomPanel}>
+            <TouchableOpacity style={styles.panelBtn} onPress={() => { setShowPanel(false); alert('사진 선택'); }}>
               <Ionicons name="image-outline" size={28} color="#6846FF" />
-              <Text style={chatStyles.panelBtnText}>사진</Text>
+              <Text style={styles.panelBtnText}>사진</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={chatStyles.panelBtn} onPress={() => { setShowPanel(false); alert('통화 시작'); }}>
+            <TouchableOpacity style={styles.panelBtn} onPress={() => { setShowPanel(false); alert('통화 시작'); }}>
               <Ionicons name="call-outline" size={28} color="#6846FF" />
-              <Text style={chatStyles.panelBtnText}>통화</Text>
+              <Text style={styles.panelBtnText}>통화</Text>
             </TouchableOpacity>
           </View>
         </Modal>
@@ -174,7 +175,7 @@ const ChatRoom: React.FC = () => {
   );
 };
 
-const chatStyles = StyleSheet.create({
+const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -232,7 +233,7 @@ const chatStyles = StyleSheet.create({
   messageRow: {
     flexDirection: 'row',
     alignItems: 'flex-end',
-    marginBottom: 8,
+    marginTop: 15,
   },
   myRow: {
     justifyContent: 'flex-end',
@@ -241,8 +242,8 @@ const chatStyles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   avatarIcon: {
-    marginHorizontal: 4,
-    marginBottom: 2,
+    marginHorizontal: 2,
+    marginBottom: 8,
   },
   nickname: {
     fontSize: 11,
@@ -251,13 +252,13 @@ const chatStyles = StyleSheet.create({
     marginRight: 2,
     fontWeight: '600',
   },
-  myNickname: {
-    color: '#6846FF',
-    textAlign: 'right',
-  },
   otherNickname: {
-    color: '#B092FF',
+    color: '#666666',
     textAlign: 'left',
+  },
+  bubbleRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
   },
   bubble: {
     maxWidth: '100%',
@@ -271,11 +272,11 @@ const chatStyles = StyleSheet.create({
     elevation: 1,
   },
   myBubble: {
-    backgroundColor: '#6846FF',
+    backgroundColor: '#B092FF',
     alignSelf: 'flex-end',
   },
   otherBubble: {
-    backgroundColor: '#F2F2F2',
+    backgroundColor: '#D9D7D7',
     alignSelf: 'flex-start',
   },
   bubbleText: {
@@ -285,25 +286,26 @@ const chatStyles = StyleSheet.create({
   bubbleTime: {
     fontSize: 10,
     color: '#AAA',
-    marginTop: 2,
-    marginLeft: 2,
-    marginRight: 2,
+    marginHorizontal: 6,
+    marginBottom: 2,
+    alignSelf: 'flex-end',
   },
   myTime: {
-    textAlign: 'right',
+    textAlign: 'left',
   },
   otherTime: {
-    textAlign: 'left',
+    textAlign: 'right',
   },
   inputBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: 'rgba(220, 220, 220, 0.25)',
     paddingHorizontal: 8,
     paddingVertical: 4,
+    paddingBottom: 30,
+    paddingTop: 10,
     borderTopWidth: 1,
     borderTopColor: '#EEE',
-    marginBottom: 0,
   },
   plusBtn: {
     marginRight: 8,
