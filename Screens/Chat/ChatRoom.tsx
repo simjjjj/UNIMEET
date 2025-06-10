@@ -9,6 +9,20 @@ import type { RootStackParamList } from '../../navigation/types';
 
 type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
 
+// 오전/오후 시간 포맷 함수
+function getKoreanAmPmTime() {
+  const now = new Date();
+  let hours = now.getHours();
+  const minutes = now.getMinutes().toString().padStart(2, '0');
+  let period = '오전';
+  if (hours >= 12) {
+    period = '오후';
+    if (hours > 12) hours -= 12;
+  }
+  if (hours === 0) hours = 12;
+  return `${period} ${hours}:${minutes}`;
+}
+
 const dummyMessages: {
     id: number;
     text: string;
@@ -18,10 +32,10 @@ const dummyMessages: {
     avatar: IoniconName;
     readCount?: number;
   }[] = [
-    { id: 1, text: '안녕하세요!', mine: false, time: '오후 2:01', nickname: '익명1', avatar: 'person-circle-outline', readCount: 2 },
-    { id: 2, text: '안녕하세요~', mine: true, time: '오후 2:01', nickname: '나', avatar: 'person-circle', readCount: 1 },
-    { id: 3, text: 'React Native 스터디 내일 7시에 만나요!', mine: false, time: '오후 2:02', nickname: '익명1', avatar: 'person-circle-outline', readCount: 2 },
-    { id: 4, text: '네! 장소는 어디에요?', mine: true, time: '오후 2:02', nickname: '나', avatar: 'person-circle', readCount: 2 },
+    { id: 1, text: '안녕하세요!', mine: false, time: '오전 9:01', nickname: '익명1', avatar: 'person-circle-outline', readCount: 2 },
+    { id: 2, text: '안녕하세요~', mine: true, time: '오전 9:01', nickname: '나', avatar: 'person-circle', readCount: 2 },
+    { id: 3, text: 'React Native 스터디 내일 7시에 만나요!', mine: false, time: '오후 2:38', nickname: '익명2', avatar: 'person-circle-outline', readCount: 3 },
+    { id: 4, text: '네! 장소는 어디에요?', mine: true, time: '오후 3:16', nickname: '나', avatar: 'person-circle', readCount: 3 },
 ];
 
 const ChatRoom: React.FC = () => {
@@ -29,7 +43,6 @@ const ChatRoom: React.FC = () => {
   const route = useRoute<RouteProp<RootStackParamList, 'ChatRoom'>>();
   const { roomId } = route.params;
 
-  // store에서 채팅방 정보 가져오기
   const room = useSelector((state: RootState) =>
     state.chats.find(r => r.id === roomId)
   );
@@ -47,9 +60,10 @@ const ChatRoom: React.FC = () => {
         id: messages.length + 1,
         text: input,
         mine: true,
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        time: getKoreanAmPmTime(), // 오전/오후 포맷
         nickname: '나',
         avatar: 'person-circle',
+        readCount: 1,
       },
     ]);
     setInput('');
@@ -115,20 +129,23 @@ const ChatRoom: React.FC = () => {
                     {msg.nickname}
                   </Text>
                 )}
-                <View style={[styles.bubbleRow, msg.mine ? { flexDirection: 'row-reverse' } : {}]}>
-                  <View style={[styles.bubble, msg.mine ? styles.myBubble : styles.otherBubble]}>
+               <View style={[styles.bubbleRow, msg.mine ? { flexDirection: 'row-reverse' } : {}]}>
+                <View style={[styles.bubble, msg.mine ? styles.myBubble : styles.otherBubble]}>
                     <Text style={styles.bubbleText}>{msg.text}</Text>
-                  </View>
-                  {/* 시간: 내 메시지면 왼쪽, 상대 메시지면 오른쪽 */}
-                  <Text
-                    style={[
-                      styles.bubbleTime,
-                      msg.mine ? styles.myTime : styles.otherTime,
-                    ]}
-                  >
-                    {msg.time}
-                  </Text>
                 </View>
+                <View
+                    style={[
+                    styles.timeReadCol,
+                    msg.mine
+                        ? { marginLeft: 8, marginRight: 0 }
+                        : { marginRight: 8, marginLeft: 0 }
+                    ]}
+                >
+                    <Text style={styles.readCount}>{msg.readCount ?? 1}</Text>
+                    <Text style={styles.bubbleTime}>{msg.time}</Text>
+                </View>
+                </View>
+
               </View>
             </View>
           ))}
@@ -228,7 +245,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'flex-end',
     padding: 12,
-    paddingBottom: 0,
+    paddingBottom: 10,
   },
   messageRow: {
     flexDirection: 'row',
@@ -283,18 +300,24 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#222',
   },
+  timeReadCol: {
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    minWidth: 32,
+    marginHorizontal: 4,
+  },
+  readCount: {
+    fontSize: 10,
+    color: '#FF6B81',
+    fontWeight: 'bold',
+    marginBottom: 1,
+  },
   bubbleTime: {
     fontSize: 10,
     color: '#AAA',
-    marginHorizontal: 6,
+    marginHorizontal: 2,
     marginBottom: 2,
     alignSelf: 'flex-end',
-  },
-  myTime: {
-    textAlign: 'left',
-  },
-  otherTime: {
-    textAlign: 'right',
   },
   inputBar: {
     flexDirection: 'row',
