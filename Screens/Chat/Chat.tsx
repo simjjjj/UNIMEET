@@ -13,33 +13,6 @@ const handleNotificationPress = () => {
   alert('채팅에서 알림을 눌렀습니다!');
 };
 
-const dummyRooms = [
-  {
-    id: 1,
-    name: 'React 스터디',
-    lastMessage: '내일 7시에 만나요!',
-    lastTime: '1분 전',
-    unread: 2,
-    profileColor: '#6846FF',
-  },
-  {
-    id: 2,
-    name: '에브리타임 채팅',
-    lastMessage: 'ㅋㅋㅋㅋㅋㅋㅋㅋㅋ',
-    lastTime: '5분 전',
-    unread: 0,
-    profileColor: '#FF62D5',
-  },
-  {
-    id: 3,
-    name: '수업팀플',
-    lastMessage: '자료 올렸어요!',
-    lastTime: '어제',
-    unread: 1,
-    profileColor: '#FF9800',
-  },
-];
-
 const Chat: React.FC = () => {
 
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -58,7 +31,7 @@ const Chat: React.FC = () => {
         />
 
       <ScrollView contentContainerStyle={styles.content}>
-        {dummyRooms.map(room => (
+        {chats.map(room => (
           <TouchableOpacity
             key={room.id}
             style={styles.roomCard}
@@ -69,7 +42,12 @@ const Chat: React.FC = () => {
               <Ionicons name="chatbubble-ellipses" size={22} color="#fff" />
             </View>
             <View style={styles.roomInfo}>
-              <Text style={styles.roomName}>{room.name}</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={styles.roomName}>{room.name}</Text>
+                <Text style={styles.memberCountText}>
+                  {room.memberCount}
+                </Text>
+              </View>
               <Text style={styles.lastMessage} numberOfLines={1}>
                 {room.lastMessage}
               </Text>
@@ -82,8 +60,8 @@ const Chat: React.FC = () => {
                 </View>
               )}
             </View>
-          </TouchableOpacity>
-        ))}
+        </TouchableOpacity>
+      ))}
       </ScrollView>
     </GradientScreen>
   );
@@ -191,6 +169,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 11,
   },
+  memberCountText: {
+    fontSize: 13,
+    color: '#888',
+    marginLeft: 5,
+    marginBottom: 4,
+    fontWeight: '500',
+  }  
 });
 
 export default Chat;

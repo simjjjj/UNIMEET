@@ -79,9 +79,14 @@ const ChatRoom: React.FC = () => {
           </TouchableOpacity>
         </View>
         <View style={styles.titleBox}>
-          <Text style={styles.title} numberOfLines={1}>
-            {room?.name || '채팅방'}
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+            <Text style={styles.title} numberOfLines={1}>
+              {room?.name || '채팅방'}
+            </Text>
+            <Text style={styles.memberCount}>
+              {room ? `${room.memberCount}` : ''}
+            </Text>
+          </View>
         </View>
         <View style={styles.rightIcons}>
           <TouchableOpacity style={styles.iconBtn} onPress={() => alert('검색')}>
@@ -381,6 +386,12 @@ const styles = StyleSheet.create({
     marginTop: 6,
     fontSize: 14,
     color: '#6846FF',
+    fontWeight: 'bold',
+  },
+  memberCount: {
+    fontSize: 16,
+    color: '#eee',
+    marginLeft: 6,
     fontWeight: 'bold',
   },
 });

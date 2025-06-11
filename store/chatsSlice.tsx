@@ -7,6 +7,7 @@ export interface ChatRoom {
   lastTime: string;
   unread: number;
   profileColor: string;
+  memberCount: number;
 }
 
 const initialState: ChatRoom[] = [
@@ -17,6 +18,7 @@ const initialState: ChatRoom[] = [
     lastTime: '1분 전',
     unread: 2,
     profileColor: '#6846FF',
+    memberCount: 3,
   },
   {
     id: 2,
@@ -25,6 +27,7 @@ const initialState: ChatRoom[] = [
     lastTime: '5분 전',
     unread: 0,
     profileColor: '#FF62D5',
+    memberCount: 4,
   },
   {
     id: 3,
@@ -33,6 +36,7 @@ const initialState: ChatRoom[] = [
     lastTime: '어제',
     unread: 1,
     profileColor: '#FF9800',
+    memberCount: 3,
   },
 ];
 
