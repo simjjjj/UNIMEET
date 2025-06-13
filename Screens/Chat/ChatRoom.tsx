@@ -122,7 +122,7 @@ const ChatRoom: React.FC = () => {
               {!msg.mine && (
                 <Ionicons
                   name={msg.avatar}
-                  size={35}
+                  size={38}
                   color="#B092FF"
                   style={styles.avatarIcon}
                 />
@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
   },
   nickname: {
     fontSize: 11,
-    marginBottom: 2,
+    marginBottom: 4,
     marginLeft: 2,
     marginRight: 2,
     fontWeight: '600',
@@ -306,8 +306,6 @@ const styles = StyleSheet.create({
     color: '#222',
   },
   timeReadCol: {
-    alignItems: 'center',
-    justifyContent: 'flex-end',
     minWidth: 32,
     marginHorizontal: 4,
   },
@@ -316,6 +314,7 @@ const styles = StyleSheet.create({
     color: '#FF6B81',
     fontWeight: 'bold',
     marginBottom: 1,
+    marginLeft: 4,
   },
   bubbleTime: {
     fontSize: 10,
@@ -358,7 +357,6 @@ const styles = StyleSheet.create({
   },
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.25)',
   },
   bottomPanel: {
     position: 'absolute',
