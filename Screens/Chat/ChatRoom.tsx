@@ -146,7 +146,9 @@ const ChatRoom: React.FC = () => {
                         : { marginRight: 8, marginLeft: 0 }
                     ]}
                 >
-                    <Text style={styles.readCount}>{msg.readCount ?? 1}</Text>
+                    <Text style={msg.mine ? styles.myReadCount : styles.readCount}>
+                      {msg.readCount ?? 1}
+                    </Text>
                     <Text style={styles.bubbleTime}>{msg.time}</Text>
                 </View>
                 </View>
@@ -315,6 +317,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 1,
     marginLeft: 4,
+  },
+  myReadCount: {
+    fontSize: 10,
+    color: '#FF6B81',
+    fontWeight: 'bold',
+    marginBottom: 1,
+    marginLeft: 34,
   },
   bubbleTime: {
     fontSize: 10,
