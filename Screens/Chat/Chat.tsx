@@ -31,6 +31,10 @@ const Chat: React.FC = () => {
         />
 
       <ScrollView contentContainerStyle={styles.content}>
+        <View style={styles.comment}>
+          <Ionicons name="rocket-outline" size={12} color="#3D3D3D" style={styles.icon} />
+          <Text style={styles.commentText}>채팅중에 욕설이나 비하발언은 처벌 대상입니다 ~!</Text>
+        </View>
         {chats.map(room => (
           <TouchableOpacity
             key={room.id}
@@ -68,15 +72,24 @@ const Chat: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
+  comment: {
+    width: '100%',
+    height: 28,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 15,
+    justifyContent: 'center',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    marginBottom: 11,
-    height: 48,
-    position: 'relative',
-    marginTop: 60,
+    marginBottom: 30,
+    flexDirection: 'row',
+  },
+  commentText: {
+    fontSize:11,
+    color: '#3D3D3D'
+  },
+  icon: {
+    marginRight: 5,
+    marginBottom: 2,
+    color: '#3D3D3D'
   },
   sideButton: {
     width: 40,
@@ -105,7 +118,7 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   content: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
     paddingTop: 10,
     paddingBottom: 30,
   },
