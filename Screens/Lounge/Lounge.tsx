@@ -12,6 +12,7 @@ import GradientScreen from '../../component/GradientScreen';
 const Lounge: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const posts = useSelector((state: RootState) => state.posts);
+  const comments = useSelector((state: RootState) => state.comments); // 댓글 배열 가져오기
 
   const handleNotificationPress = (): void => {
     alert('라운지 화면에서 알림을 눌렀습니다!');
@@ -20,6 +21,7 @@ const Lounge: React.FC = () => {
   const handleWritePress = () => {
     alert('글쓰기 버튼 클릭!');
   };
+
   return (
     <GradientScreen>
       <View style={styles.container}>
@@ -38,24 +40,28 @@ const Lounge: React.FC = () => {
           <View style={styles.postList}>
             {posts
               .filter(post => !post.notice)
-              .map(post => (
-                <TouchableOpacity
-                  key={post.id}
-                  style={styles.postCard}
-                  onPress={() => navigation.navigate('PostDetail', { postId: post.id })}
-                >
-                  <Text style={styles.postTitle}>{post.title}</Text>
-                  {post.text && <Text style={styles.postText}>{post.text}</Text>}
-                  <View style={styles.postMeta}>
-                    <Text style={styles.postAuthor}>{post.author}</Text>
-                    <Text style={styles.postDate}>{post.date}</Text>
-                    <Ionicons name="chatbubble-ellipses-outline" size={14} color="#B092FF" style={{ marginLeft: 8, marginRight: 2 }} />
-                    <Text style={styles.postComments}>{post.comments}</Text>
-                    <Ionicons name="heart-outline" size={15} color="#FF6B81" style={{ marginLeft: 6, marginRight: 2 }} />
-                    <Text style={styles.postLikes}>{post.likes}</Text>
-                  </View>
-                </TouchableOpacity>
-              ))}
+              .map(post => {
+                // 실제 댓글 수 계산
+                const commentCount = comments.filter(c => c.postId === post.id).length;
+                return (
+                  <TouchableOpacity
+                    key={post.id}
+                    style={styles.postCard}
+                    onPress={() => navigation.navigate('PostDetail', { postId: post.id })}
+                  >
+                    <Text style={styles.postTitle}>{post.title}</Text>
+                    {post.text && <Text style={styles.postText}>{post.text}</Text>}
+                    <View style={styles.postMeta}>
+                      <Text style={styles.postAuthor}>{post.author}</Text>
+                      <Text style={styles.postDate}>{post.date}</Text>
+                      <Ionicons name="chatbubble-ellipses-outline" size={14} color="#B092FF" style={{ marginLeft: 8, marginRight: 2 }} />
+                      <Text style={styles.postComments}>{commentCount}</Text>
+                      <Ionicons name="heart-outline" size={15} color="#FF6B81" style={{ marginLeft: 6, marginRight: 2 }} />
+                      <Text style={styles.postLikes}>{post.likes}</Text>
+                    </View>
+                  </TouchableOpacity>
+                );
+              })}
           </View>
         </ScrollView>
 

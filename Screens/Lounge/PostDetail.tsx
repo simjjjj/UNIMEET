@@ -12,23 +12,10 @@ const PostDetail: React.FC = () => {
   const route = useRoute<RouteProp<RootStackParamList, 'PostDetail'>>();
   const { postId } = route.params;
 
-  // 임시 댓글 데이터
-  const dummyComments = [
-    {
-      id: 1,
-      author: '익명1',
-      text: '좋은 정보 감사합니다!',
-      date: '2분 전',
-      likes: 2,
-    },
-    {
-      id: 2,
-      author: '익명2',
-      text: '저도 궁금했어요~',
-      date: '1분 전',
-      likes: 0,
-    },
-  ];
+  // Redux에서 해당 게시글의 댓글만 필터링
+  const comments = useSelector((state: RootState) =>
+    state.comments.filter(c => c.postId === postId)
+  );
 
   const post = useSelector((state: RootState) =>
     state.posts.find(p => p.id === postId)
@@ -62,10 +49,10 @@ const PostDetail: React.FC = () => {
         </View>
 
         <ScrollView contentContainerStyle={styles.content}>
-        <View style={styles.comment}>
+          <View style={styles.comment}>
             <Ionicons name="megaphone-outline" size={12} color="#3D3D3D" style={styles.icon} />
             <Text style={styles.commentText}>비적절한 게시글, 댓글은 신고 대상입니다.</Text>
-        </View>
+          </View>
           {/* 게시글 카드 */}
           <View style={styles.card}>
             {/* 작성자/날짜/더보기 */}
@@ -91,7 +78,8 @@ const PostDetail: React.FC = () => {
               </TouchableOpacity>
               <TouchableOpacity style={styles.actionBtn}>
                 <Ionicons name="chatbubble-ellipses-outline" size={18} color="#B092FF" />
-                <Text style={styles.actionText}>{post.comments}</Text>
+                {/* 댓글 개수: Redux에서 계산 */}
+                <Text style={styles.actionText}>{comments.length}</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.actionBtn}>
                 <Ionicons name="share-social-outline" size={18} color="#B1B1B1" />
@@ -104,9 +92,9 @@ const PostDetail: React.FC = () => {
 
           {/* 댓글 영역 */}
           <View style={styles.commentSection}>
-            <Text style={styles.commentSectionTitle}>댓글 {dummyComments.length}</Text>
+            <Text style={styles.commentSectionTitle}>댓글 {comments.length}</Text>
             <View style={styles.commentDivider} />
-            {dummyComments.map(comment => (
+            {comments.map(comment => (
               <React.Fragment key={comment.id}>
                 <View style={styles.commentItem}>
                   <Ionicons name="person-circle-outline" size={22} color="#B092FF" style={{ marginRight: 8 }} />
@@ -119,7 +107,7 @@ const PostDetail: React.FC = () => {
                   </View>
                   <TouchableOpacity style={styles.commentLikeBtn}>
                     <Ionicons name="heart-outline" size={15} color="#FF6B81" />
-                    <Text style={styles.commentLikeText}>{comment.likes}</Text>
+                    <Text style={styles.commentLikeText}>{comment.likes ?? 0}</Text>
                   </TouchableOpacity>
                 </View>
                 <View style={styles.commentDivider} />
@@ -319,7 +307,6 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: '#3D3D3D',
   },
-
   icon: {
     marginRight: 5,
     marginBottom: 2,
@@ -328,4 +315,3 @@ const styles = StyleSheet.create({
 });
 
 export default PostDetail;
-

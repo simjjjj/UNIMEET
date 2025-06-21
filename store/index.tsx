@@ -2,12 +2,14 @@ import { configureStore } from '@reduxjs/toolkit';
 import profileReducer from './profileSlice';
 import postsReducer from './postsSlice';
 import chatsReducer from './ChatsSlice';
+import commentsReducer from './commentsSlice';
 
 export const store = configureStore({
   reducer: {
     posts: postsReducer,
     profile: profileReducer,
     chats: chatsReducer,
+    comments: commentsReducer,
   }
 });
 

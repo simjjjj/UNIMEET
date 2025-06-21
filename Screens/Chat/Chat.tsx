@@ -33,7 +33,7 @@ const Chat: React.FC = () => {
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.comment}>
           <Ionicons name="rocket-outline" size={12} color="#3D3D3D" style={styles.icon} />
-          <Text style={styles.commentText}>채팅중에 욕설이나 비하발언은 처벌 대상입니다 ~!</Text>
+          <Text style={styles.commentText}>채팅중에 욕설이나 비하발언은 처벌 대상입니다 !</Text>
         </View>
         {chats.map(room => (
           <TouchableOpacity
