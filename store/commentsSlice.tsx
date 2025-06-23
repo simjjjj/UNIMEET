@@ -10,11 +10,12 @@ export interface Comment {
 }
 
 const initialState: Comment[] = [
-  { id: 1, postId: 1, author: '익명1', text: '좋은 정보 감사합니다!', date: '2분 전' },
-  { id: 2, postId: 1, author: '익명2', text: '저도 궁금했어요~', date: '1분 전' },
-  { id: 3, postId: 2, author: '익명3', text: '참여하고 싶어요!', date: '3분 전' },
-  { id: 4, postId: 3, author: '익명4', text: '사진 찍었어요!', date: '5분 전' },
+  { id: 1, postId: 1, author: '익명', text: '좋은 정보 감사합니다!', date: '2분 전' },
+  { id: 2, postId: 1, author: '익명', text: '저도 궁금했어요~', date: '1분 전' },
+  { id: 3, postId: 2, author: '익명', text: '참여하고 싶어요!', date: '3분 전' },
+  { id: 4, postId: 3, author: '익명', text: '사진 찍었어요!', date: '5분 전' },
   // 데이터 원하는 만큼 추가해보기
+  { id: 5, postId: 2, author: '익명', text: '프로젝트를 진행하는건가요?', date: '한시간 전'},
 ];
 
 const commentsSlice = createSlice({
