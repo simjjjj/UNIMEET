@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal, TextInput } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
 import Header from '../../navigation/Header';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { MeetingRoom, Participant, Gender, RootStackParamList } from '../../navigation/types';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface RoomPreset {
   label: string;
@@ -24,6 +25,7 @@ const ROOM_PRESETS: RoomPreset[] = [
 
 const Home: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const insets = useSafeAreaInsets();
 
   // 대충 임의로 만든 데이터들
   const [meetingRooms, setMeetingRooms] = useState<MeetingRoom[]>([
@@ -412,82 +414,136 @@ const Home: React.FC = () => {
       <Modal
         visible={modalVisible}
         transparent
-        animationType="fade"
+        animationType="slide"
         onRequestClose={() => setModalVisible(false)}
       >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContainer}>
+        <KeyboardAvoidingView 
+          style={styles.modalOverlay}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
+          <View style={[styles.modalContainer, { paddingBottom: Math.max(insets.bottom, 20) }]}>
+            {/* 핸들 바 */}
+            <View style={styles.modalHandle} />
+            
             {/* 헤더 */}
-            <LinearGradient
-              colors={['#947CFF', '#EC75FF']}
-              start={{x: 0, y: 0}}
-              end={{x: 1, y: 0}}
-              style={styles.modalHeader}
-            >
-              <Text style={styles.modalHeaderText}>새로운 미팅방</Text>
-            </LinearGradient>
-
-            {/* 본문 */}
-            <View style={styles.modalBody}>
-              <Text style={styles.inputLabel}>방 제목</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="예) 즐겁게 놀아요"
-                placeholderTextColor="#A0A0A0"
-                value={roomTitle}
-                onChangeText={setRoomTitle}
-              />
-
-              <Text style={styles.presetLabel}>유형 선택</Text>
-              <View style={styles.presetContainer}>
-                {ROOM_PRESETS.map((preset) => (
-                  <TouchableOpacity
-                    key={preset.label}
-                    style={[
-                      styles.presetButton,
-                      selectedPreset.label === preset.label && styles.presetButtonSelected
-                    ]}
-                    onPress={() => setSelectedPreset(preset)}
-                  >
-                    <Ionicons 
-                      name={preset.type === 'mixed' ? 'people' : 'male-female'} 
-                      size={20} 
-                      color={selectedPreset.label === preset.label ? '#FFF' : '#947CFF'} 
-                    />
-                    <Text style={[
-                      styles.presetText,
-                      selectedPreset.label === preset.label && styles.presetTextSelected
-                    ]}>
-                      {preset.label}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
+            <View style={styles.modalHeader}>
+              <View style={styles.modalHeaderContent}>
+                <Ionicons name="add-circle" size={28} color="#6846FF" />
+                <Text style={styles.modalHeaderText}>새로운 미팅방 만들기</Text>
               </View>
+              <TouchableOpacity 
+                style={styles.closeButton}
+                onPress={() => setModalVisible(false)}
+              >
+                <Ionicons name="close" size={24} color="#888" />
+              </TouchableOpacity>
             </View>
+
+            {/* 본문 - ScrollView로 감싸기 */}
+            <ScrollView 
+              style={styles.modalBodyWrapper}
+              contentContainerStyle={styles.modalBody}
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
+            >
+              <View style={styles.inputSection}>
+                <Text style={styles.inputLabel}>
+                  <Ionicons name="text" size={16} color="#6846FF" /> 방 제목
+                </Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="어떤 미팅을 만들까요? (예: React 스터디, 축구 같이 해요)"
+                  placeholderTextColor="#A0A0A0"
+                  value={roomTitle}
+                  onChangeText={setRoomTitle}
+                  multiline={true}
+                  maxLength={100}
+                />
+                <Text style={styles.charCount}>{roomTitle.length}/100</Text>
+              </View>
+
+              <View style={styles.presetSection}>
+                <Text style={styles.presetLabel}>
+                  <Ionicons name="people" size={16} color="#6846FF" /> 미팅 유형 선택
+                </Text>
+                <Text style={styles.presetDescription}>참여하고 싶은 미팅 스타일을 선택해주세요</Text>
+                
+                <View style={styles.presetContainer}>
+                  {ROOM_PRESETS.map((preset) => (
+                    <TouchableOpacity
+                      key={preset.label}
+                      style={[
+                        styles.presetButton,
+                        selectedPreset.label === preset.label && styles.presetButtonSelected
+                      ]}
+                      onPress={() => setSelectedPreset(preset)}
+                      activeOpacity={0.8}
+                    >
+                      <View style={[
+                        styles.presetIconContainer,
+                        selectedPreset.label === preset.label && styles.presetIconContainerSelected
+                      ]}>
+                        <Ionicons 
+                          name={preset.type === 'mixed' ? 'people' : 'heart'} 
+                          size={24} 
+                          color={selectedPreset.label === preset.label ? '#FFF' : '#6846FF'} 
+                        />
+                      </View>
+                      <View style={styles.presetTextContainer}>
+                        <Text style={[
+                          styles.presetText,
+                          selectedPreset.label === preset.label && styles.presetTextSelected
+                        ]}>
+                          {preset.label}
+                        </Text>
+                        <Text style={[
+                          styles.presetSubText,
+                          selectedPreset.label === preset.label && styles.presetSubTextSelected
+                        ]}>
+                          {preset.type === 'mixed' ? '성별무관' : '남녀매칭'}
+                        </Text>
+                      </View>
+                      {selectedPreset.label === preset.label && (
+                        <Ionicons name="checkmark-circle" size={20} color="#FFF" />
+                      )}
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+            </ScrollView>
 
             {/* 버튼 그룹 */}
             <View style={styles.buttonGroup}>
               <TouchableOpacity 
                 style={styles.cancelButton}
                 onPress={() => setModalVisible(false)}
+                activeOpacity={0.7}
               >
-                <Text style={styles.cancelButtonText}>닫기</Text>
+                <Text style={styles.cancelButtonText}>취소</Text>
               </TouchableOpacity>
-              <LinearGradient
-                colors={['#947CFF', '#EC75FF']}
-                style={styles.createButton}
-                start={{x: 0, y: 0}}
-                end={{x: 1, y: 0}}
+              
+              <TouchableOpacity
+                style={[
+                  styles.createButton,
+                  !roomTitle.trim() && styles.createButtonDisabled
+                ]}
+                onPress={handleAddRoom}
+                disabled={!roomTitle.trim()}
+                activeOpacity={0.8}
               >
-                <TouchableOpacity onPress={handleAddRoom}>
-                  <Text style={styles.createButtonText}>
-                    <Ionicons name="rocket" size={14} /> 생성하기
-                  </Text>
-                </TouchableOpacity>
-              </LinearGradient>
+                <LinearGradient
+                  colors={roomTitle.trim() ? ['#6846FF', '#9C27B0'] : ['#CCC', '#999']}
+                  style={styles.createButtonGradient}
+                  start={{x: 0, y: 0}}
+                  end={{x: 1, y: 0}}
+                >
+                  <Ionicons name="rocket" size={18} color="#FFF" />
+                  <Text style={styles.createButtonText}>미팅방 생성</Text>
+                </LinearGradient>
+              </TouchableOpacity>
             </View>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </Modal>
     </LinearGradient>
   );
@@ -729,103 +785,208 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    justifyContent: 'flex-end',
   },
   modalContainer: {
-    width: '85%',
-    borderRadius: 20,
-    overflow: 'hidden',
     backgroundColor: '#FFF',
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+    maxHeight: '90%',
+    flex: 1,
+    marginTop: 100,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -5 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 20,
+  },
+  modalHandle: {
+    width: 50,
+    height: 5,
+    backgroundColor: '#DDD',
+    borderRadius: 3,
+    alignSelf: 'center',
+    marginTop: 12,
+    marginBottom: 8,
   },
   modalHeader: {
-    padding: 20,
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 24,
+    paddingVertical: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F5F5F5',
+  },
+  modalHeaderContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
   },
   modalHeaderText: {
-    color: 'white',
+    color: '#333',
     fontSize: 20,
-    fontWeight: '800',
-    letterSpacing: 0.8,
-    textShadowColor: 'rgba(0,0,0,0.75)',
-    textShadowOffset: { width: 1, height: 2 },
-    textShadowRadius: 3,
+    fontWeight: '700',
+    marginLeft: 12,
+    letterSpacing: 0.3,
+  },
+  closeButton: {
+    padding: 8,
+    borderRadius: 20,
+    backgroundColor: '#F8F8F8',
+  },
+  modalBodyWrapper: {
+    flex: 1,
   },
   modalBody: {
-    padding: 25,
+    padding: 24,
+    paddingBottom: 20,
+  },
+  inputSection: {
+    marginBottom: 28,
   },
   inputLabel: {
-    color: '#444',
-    fontSize: 14,
-    marginBottom: 8,
-    fontWeight: '600',
-  },
-  input: {
-    borderWidth: 1.5,
-    borderColor: '#EEE',
-    borderRadius: 12,
-    padding: 14,
-    fontSize: 15,
-    marginBottom: 25,
-    backgroundColor: '#FAFAFA',
-  },
-  presetLabel: {
-    color: '#444',
-    fontSize: 14,
+    color: '#333',
+    fontSize: 16,
     marginBottom: 12,
     fontWeight: '600',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  input: {
+    borderWidth: 2,
+    borderColor: '#E8E8E8',
+    borderRadius: 16,
+    padding: 16,
+    fontSize: 16,
+    backgroundColor: '#FAFAFA',
+    minHeight: 60,
+    textAlignVertical: 'top',
+    color: '#333',
+  },
+  charCount: {
+    textAlign: 'right',
+    color: '#999',
+    fontSize: 12,
+    marginTop: 8,
+    fontWeight: '500',
+  },
+  presetSection: {
+    marginBottom: 20,
+  },
+  presetLabel: {
+    color: '#333',
+    fontSize: 16,
+    marginBottom: 8,
+    fontWeight: '600',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  presetDescription: {
+    color: '#666',
+    fontSize: 14,
+    marginBottom: 16,
+    lineHeight: 20,
   },
   presetContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
+    gap: 12,
   },
   presetButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 18,
-    borderRadius: 10,
-    borderWidth: 1.5,
-    borderColor: '#EEE',
-    gap: 8,
+    padding: 16,
+    borderRadius: 16,
+    borderWidth: 2,
+    borderColor: '#E8E8E8',
+    backgroundColor: '#FAFAFA',
+    shadowColor: '#6846FF',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
   presetButtonSelected: {
-    backgroundColor: '#947CFF',
-    borderColor: '#947CFF',
+    backgroundColor: '#6846FF',
+    borderColor: '#6846FF',
+    shadowOpacity: 0.2,
+    elevation: 8,
+  },
+  presetIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: 'rgba(104, 70, 255, 0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 16,
+  },
+  presetIconContainerSelected: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+  },
+  presetTextContainer: {
+    flex: 1,
   },
   presetText: {
-    fontSize: 13,
-    color: '#666',
-    fontWeight: '500',
+    fontSize: 16,
+    color: '#333',
+    fontWeight: '600',
+    marginBottom: 4,
   },
   presetTextSelected: {
     color: '#FFF',
   },
-  buttonGroup: {
-    flexDirection: 'row',
-    borderTopWidth: 1,
-    borderTopColor: '#F0F0F0',
-  },
-  cancelButton: {
-    flex: 0.8,
-    padding: 18,
-    alignItems: 'center',
-    backgroundColor: '#FFF',
-  },
-  cancelButtonText: {
+  presetSubText: {
+    fontSize: 13,
     color: '#666',
     fontWeight: '500',
   },
-  createButton: {
+  presetSubTextSelected: {
+    color: 'rgba(255,255,255,0.8)',
+  },
+  buttonGroup: {
+    flexDirection: 'row',
+    paddingHorizontal: 24,
+    paddingVertical: 16,
+    gap: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#F5F5F5',
+    backgroundColor: '#FFF',
+  },
+  cancelButton: {
     flex: 1,
+    paddingVertical: 16,
+    alignItems: 'center',
+    backgroundColor: '#F8F8F8',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#E8E8E8',
+  },
+  cancelButtonText: {
+    color: '#666',
+    fontWeight: '600',
+    fontSize: 16,
+  },
+  createButton: {
+    flex: 2,
+    borderRadius: 16,
+    overflow: 'hidden',
+  },
+  createButtonDisabled: {
+    opacity: 0.6,
+  },
+  createButtonGradient: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    gap: 8,
   },
   createButtonText: {
     color: '#FFF',
     fontWeight: '700',
-    textAlign: 'center',
-    padding: 16,
+    fontSize: 16,
+    letterSpacing: 0.3,
   },  
 });
 
