@@ -3,9 +3,11 @@ import profileReducer from './profileSlice';
 import postsReducer from './postsSlice';
 import chatsReducer from './chatsSlice';
 import commentsReducer from './commentsSlice';
+import authReducer from './authSlice';
 
 export const store = configureStore({
   reducer: {
+    auth: authReducer,
     posts: postsReducer,
     profile: profileReducer,
     chats: chatsReducer,

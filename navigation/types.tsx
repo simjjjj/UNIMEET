@@ -30,6 +30,11 @@ export type RootStackParamList = {
   RoomDetail: { room: MeetingRoom };
   PostDetail: { postId: number };
   ChatRoom: { roomId: number };
+  Login: undefined;
+  Signup: undefined;
+  OnboardingMBTI: undefined;
+  OnboardingInterests: { mbti?: string };
+  OnboardingHeight: { mbti?: string; interests?: string[] };
 };
 
 

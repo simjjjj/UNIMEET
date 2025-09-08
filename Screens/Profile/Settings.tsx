@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Switch, TouchableOpacity, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { useDispatch } from 'react-redux';
+import { logout } from '../../store/authSlice';
 import GradientScreen from '../../component/GradientScreen';
 
 const settingsList = [
@@ -34,7 +36,7 @@ const settingsList = [
   {
     label: '로그아웃',
     icon: 'log-out-outline',
-    onPress: () => Alert.alert('로그아웃 되었습니다.'),
+    onPress: 'logout',
   },
   {
     label: '회원탈퇴',
@@ -45,7 +47,26 @@ const settingsList = [
 
 const Settings: React.FC = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   const [isNotificationOn, setIsNotificationOn] = useState(true);
+
+  const handleLogout = () => {
+    Alert.alert(
+      '로그아웃',
+      '정말 로그아웃 하시겠습니까?',
+      [
+        { text: '취소', style: 'cancel' },
+        { 
+          text: '로그아웃', 
+          style: 'destructive',
+          onPress: () => {
+            dispatch(logout());
+            Alert.alert('로그아웃 완료', '안전하게 로그아웃되었습니다.');
+          }
+        }
+      ]
+    );
+  };
 
   return (
     <GradientScreen>
@@ -84,7 +105,7 @@ const Settings: React.FC = () => {
                   styles.settingRow, 
                   index === settingsList.length - 1 && styles.lastRow
                 ]} 
-                onPress={item.onPress}
+                onPress={item.onPress === 'logout' ? handleLogout : item.onPress}
               >
                 <View style={styles.settingLeft}>
                   <Ionicons name={item.icon as any} size={22} color="#6846FF" style={{ marginRight: 12 }} />
