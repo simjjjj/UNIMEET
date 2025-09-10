@@ -201,13 +201,13 @@ const styles = StyleSheet.create({
   titleInput: {
     padding: 16,
     fontSize: 16,
-    color: '#FFF',
+    color: '#767676',
     fontWeight: '500',
   },
   contentInput: {
     padding: 16,
     fontSize: 16,
-    color: '#FFF',
+    color: '#767676',
     minHeight: 250,
     maxHeight: 400,
     lineHeight: 24,

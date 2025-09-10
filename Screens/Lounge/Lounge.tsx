@@ -40,6 +40,7 @@ const Lounge: React.FC = () => {
           <View style={styles.postList}>
             {posts
               .filter(post => !post.notice)
+              .sort((a, b) => b.id - a.id) // 최신 글이 위로 (ID가 높을수록 최신)
               .map(post => {
                 // 실제 댓글 수 계산
                 const commentCount = comments.filter(c => c.postId === post.id).length;
