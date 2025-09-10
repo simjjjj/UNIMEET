@@ -1,45 +1,50 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import type { RootStackParamList } from '../../navigation/types';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-// 참가자 정보 카드 컴포넌트
-const ParticipantInfo: React.FC<{ p: any; color: string }> = ({ p, color }) => (
+const { width } = Dimensions.get('window');
+
+// 참가자 정보 카드 컴포넌트 (가로형)
+const ParticipantInfo: React.FC<{ p: any; color: string; index: number }> = ({ p, color, index }) => (
   <View style={styles.participantCard}>
-    <Ionicons
-      name="person-circle"
-      size={16}
-      color={color}
-      style={styles.cardIcon}
-    />
-    <View style={styles.departmentBox}>
-      <Text style={[styles.participantDepartment, { color }]} numberOfLines={1} ellipsizeMode="tail">
-        {p.department || ''}
-      </Text>
+    {/* 상태 표시 */}
+    <View style={[styles.statusIndicator, { backgroundColor: p.isOnline ? '#4CAF50' : '#FFC107' }]} />
+    
+    {/* 왼쪽: 아바타 및 기본 정보 */}
+    <View style={styles.leftSection}>
+      <View style={[styles.avatarContainer, { borderColor: (p.department && p.department !== '미정') ? color : '#999' }]}>
+        <Ionicons name="person" size={20} color={(p.department && p.department !== '미정') ? color : '#999'} />
+      </View>
+      <View style={styles.basicInfo}>
+        <Text style={[styles.participantDepartment, { color: (p.department && p.department !== '미정') ? color : '#999' }]} numberOfLines={1} ellipsizeMode="tail">
+          {p.department || '미정'}
+        </Text>
+        <Text style={[styles.mbtiText, { backgroundColor: color + '20', color: color }]}>
+          {p.mbti || 'UNKNOWN'}
+        </Text>
+      </View>
     </View>
-    <View style={styles.detailsBox}>
-      <View style={styles.detailItem}>
-        <Text style={styles.detailLabel}>나이</Text>
-        <Text style={styles.detailText}>{p.age || '-'}</Text>
+    
+    {/* 오른쪽: 상세 정보 */}
+    <View style={styles.rightSection}>
+      <View style={styles.detailRow}>
+        <View style={styles.detailItem}>
+          <Ionicons name="calendar-outline" size={12} color="#666" />
+          <Text style={styles.detailValue}>{p.age || '-'}세</Text>
+        </View>
+        <View style={styles.detailItem}>
+          <Ionicons name="school-outline" size={12} color="#666" />
+          <Text style={styles.detailValue}>{p.studentId?.slice(-2) || '-'}</Text>
+        </View>
       </View>
-      <View style={styles.detailDivider} />
-      <View style={styles.detailItem}>
-        <Text style={styles.detailLabel}>학번</Text>
-        <Text style={styles.detailText}>{p.studentId || '-'}</Text>
-      </View>
-      <View style={styles.detailDivider} />
-      <View style={styles.detailItem}>
-        <Text style={styles.detailLabel}>MBTI</Text>
-        <Text style={styles.detailText}>{p.mbti || '-'}</Text>
-      </View>
-      <View style={styles.detailDivider} />
-      <View style={styles.detailItem}>
-        <Text style={styles.detailLabel}>관심사</Text>
-        <Text style={styles.detailText} numberOfLines={1} ellipsizeMode="tail">
-          {p.interests?.length ? p.interests.join(', ') : '-'}
+      
+      <View style={styles.interestsContainer}>
+        <Text style={styles.interestsText} numberOfLines={2} ellipsizeMode="tail">
+          {p.interests?.length ? p.interests.join(' • ') : '관심사 없음'}
         </Text>
       </View>
     </View>
@@ -63,6 +68,37 @@ const RoomDetail: React.FC = () => {
   const maleList = room.participants.filter(p => p.gender === '남');
   const femaleList = room.participants.filter(p => p.gender === '여');
   const isMixed = room.type === 'mixed';
+  
+  // 방 타입에 따른 최대 인원수 계산
+  const getMaxParticipants = () => {
+    const currentTotal = room.participants.length;
+    const maleCount = maleList.length;
+    const femaleCount = femaleList.length;
+    
+    if (isMixed) {
+      // 혼성방: 4명 또는 6명
+      if (currentTotal <= 4) return 4;
+      return 6;
+    } else {
+      // 일반방: 남녀 비율을 맞춰야 함
+      if (maleCount === 1 && femaleCount === 1) return 2; // 1:1
+      if (maleCount <= 2 && femaleCount <= 2) return 4; // 2:2
+      return 6; // 3:3
+    }
+  };
+  
+  const maxParticipants = getMaxParticipants();
+  
+  // 실제로 신청을 받을 수 있는지 판단
+  const canApply = room.participants.length < maxParticipants;
+  const isFull = !canApply;
+  
+  // 디버깅용
+  console.log('방 타입:', isMixed ? '혼성' : '일반');
+  console.log('현재 참가자 수:', room.participants.length);
+  console.log('남자:', maleList.length, '여자:', femaleList.length);
+  console.log('최대 참가자 수:', maxParticipants);
+  console.log('인원이 다 찼나:', isFull);
 
   // 색상 결정 함수
   const getColor = (p: any) => {
@@ -86,65 +122,87 @@ const RoomDetail: React.FC = () => {
         <View style={{ width: 36 }} />
       </View>
 
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView 
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* 안내 메시지 */}
         <View style={styles.comment}>
           <Ionicons name="rocket-outline" size={12} color="#3D3D3D" style={styles.icon} />
           <Text style={styles.commentText}>모든 멤버가 참가 상태이면 정식 채팅방이 시작됩니다.</Text>
         </View>
 
-        <View>
-          <Text style={styles.mainTitle}>{room.title}</Text>
+        {/* 방 제목 및 정보 */}
+        <View style={styles.roomHeader}>
+          <Text style={styles.roomTitle}>{room.title}</Text>
+          <View style={styles.roomStats}>
+            <View style={styles.statItem}>
+              <Ionicons name="people" size={14} color="#666" />
+              <Text style={styles.statText}>{room.participants.length}명</Text>
+            </View>
+            <View style={styles.statDivider} />
+            <View style={styles.statItem}>
+              <Ionicons name="time" size={14} color="#666" />
+              <Text style={styles.statText}>진행중</Text>
+            </View>
+          </View>
         </View>
 
         {isMixed ? (
-          <ScrollView>
-            {chunkArray(room.participants, 3).map((row, rowIdx) => (
-              <ScrollView
-                key={rowIdx}
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.horizontalScroll}
-              >
-                {row.map(p => (
-                  <View key={p.id} style={styles.participantCardWrapper}>
-                    <ParticipantInfo p={p} color={getColor(p)} />
-                  </View>
-                ))}
-              </ScrollView>
+          <View>
+            {room.participants.map((p, index) => (
+              <View key={p.id} style={styles.participantCardWrapper}>
+                <ParticipantInfo p={p} color={getColor(p)} index={index} />
+              </View>
             ))}
-          </ScrollView>
+          </View>
         ) : (
           <>
-            <Text style={styles.groupLabel}>남자그룹</Text>
-            <View style={styles.participantGroupBox}>
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.horizontalScroll}
-              >
-                {maleList.map(p => (
-                  <View key={p.id} style={styles.participantCardWrapper}>
-                    <ParticipantInfo p={p} color={getColor(p)} />
-                  </View>
-                ))}
-              </ScrollView>
+            <View style={styles.groupHeader}>
+              <View style={[styles.groupIcon, { backgroundColor: '#6846FF20' }]}>
+                <Ionicons name="male" size={16} color="#6846FF" />
+              </View>
+              <Text style={styles.groupLabel}>남자그룹</Text>
+              <Text style={styles.groupCount}>{maleList.length}명</Text>
             </View>
-            <Text style={styles.groupLabel}>여자그룹</Text>
             <View style={styles.participantGroupBox}>
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.horizontalScroll}
-              >
-                {femaleList.map(p => (
-                  <View key={p.id} style={styles.participantCardWrapper}>
-                    <ParticipantInfo p={p} color={getColor(p)} />
-                  </View>
-                ))}
-              </ScrollView>
+              {maleList.map((p, index) => (
+                <View key={p.id} style={styles.participantCardWrapper}>
+                  <ParticipantInfo p={p} color={getColor(p)} index={index} />
+                </View>
+              ))}
+            </View>
+            <View style={styles.groupHeader}>
+              <View style={[styles.groupIcon, { backgroundColor: '#FF62D520' }]}>
+                <Ionicons name="female" size={16} color="#FF62D5" />
+              </View>
+              <Text style={styles.groupLabel}>여자그룹</Text>
+              <Text style={styles.groupCount}>{femaleList.length}명</Text>
+            </View>
+            <View style={styles.participantGroupBox}>
+              {femaleList.map((p, index) => (
+                <View key={p.id} style={styles.participantCardWrapper}>
+                  <ParticipantInfo p={p} color={getColor(p)} index={index} />
+                </View>
+              ))}
             </View>
           </>
         )}
+        
+        {/* 신청 버튼 */}
+        <View style={styles.buttonContainer}>
+          {isFull ? (
+            <TouchableOpacity style={styles.fullButton} disabled>
+              <Ionicons name="people" size={20} color="#999" />
+              <Text style={styles.fullButtonText}>인원이 다 찼어요 ({room.participants.length}/{maxParticipants})</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity style={styles.applyButton}>
+              <Ionicons name="add-circle" size={20} color="#FFF" />
+              <Text style={styles.applyButtonText}>미팅 신청하기 ({room.participants.length}/{maxParticipants})</Text>
+            </TouchableOpacity>
+          )}
+        </View>
       </ScrollView>
     </LinearGradient>
   );
@@ -171,118 +229,10 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   content: {
-    paddingTop: 10,
+    paddingTop: 5,
     paddingHorizontal: 20,
-  },
-  mainTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 18,
-    marginTop: 18,
-  },
-  groupLabel: {
-    fontSize: 13,
-    fontWeight: 'bold',
-    marginTop: -2,
-    marginBottom: 10,
-    marginLeft: 6,
-  },
-  participantGroupBox: {
-    marginBottom: 24,
-    alignItems: 'flex-start',
-    flex: 1,
-  },
-  horizontalScroll: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    paddingBottom: 4,
-  },
-  participantCardWrapper: {
-    marginRight: 18,
-    marginBottom: 20,
-  },
-  participantCard: {
-    width: 130,
-    minHeight: 185,
-    backgroundColor: '#fff',
-    borderRadius: 14,
-    paddingTop: 16,
-    paddingBottom: 14,
-    paddingHorizontal: 10,
-    elevation: 4,
-    shadowColor: '#B092FF',
-    shadowOpacity: 0.14,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 3 },
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    position: 'relative',
-  },
-  cardIcon: {
-    position: 'absolute',
-    top: 10,
-    left: 10,
-    zIndex: 2,
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    elevation: 2,
-  },
-  departmentBox: {
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 12,
-    marginBottom: 12,
-  },
-  participantDepartment: {
-    fontSize: 12,
-    fontWeight: '500',
-    textAlign: 'center',
-    width: '100%',
-    letterSpacing: 0.5,
-  },
-  detailsBox: {
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-    borderRadius: 10,
-    padding: 10,
-    backgroundColor: '#F8F5FF',
-    width: '100%',
-  },
-  detailItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 1,
-  },
-  detailLabel: {
-    fontSize: 11,
-    color: '#8B7E74',
-    fontWeight: 'bold',
-    width: 42,
-  },
-  detailText: {
-    fontSize: 11,
-    color: '#444',
-    flex: 1,
-    textAlign: 'right',
-  },
-  detailDivider: {
-    height: 1,
-    backgroundColor: '#E5C7A0',
-    marginVertical: 5,
-    opacity: 0.7,
-  },
-  sideButton: {
-    width: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 2, height: 3 },
-    shadowOpacity: 0.5,
-    shadowRadius: 4,
-    elevation: 5,
+    paddingBottom: 140,
+    flexGrow: 1,
   },
   comment: {
     width: '100%',
@@ -302,6 +252,229 @@ const styles = StyleSheet.create({
     marginRight: 5,
     marginBottom: 2,
     color: '#3D3D3D'
+  },
+  // 방 헤더 스타일
+  roomHeader: {
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    borderRadius: 20,
+    padding: 20,
+    marginBottom: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 4,
+  },
+  roomTitle: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#333',
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  roomStats: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  statItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  statText: {
+    fontSize: 12,
+    color: '#666',
+    marginLeft: 4,
+    fontWeight: '500',
+  },
+  statDivider: {
+    width: 1,
+    height: 12,
+    backgroundColor: '#DDD',
+    marginHorizontal: 12,
+  },
+  // 그룹 헤더 스타일
+  groupHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  groupIcon: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 10,
+  },
+  groupLabel: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#333',
+    flex: 1,
+  },
+  groupCount: {
+    fontSize: 12,
+    color: '#666',
+    backgroundColor: '#F0F0F0',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 10,
+    fontWeight: '600',
+  },
+  participantGroupBox: {
+    marginBottom: 28,
+    alignItems: 'flex-start',
+    flex: 1,
+  },
+  horizontalScroll: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    paddingBottom: 8,
+  },
+  participantCardWrapper: {
+    marginBottom: 12,
+  },
+  // 가로형 참가자 카드 스타일
+  participantCard: {
+    width: width - 40,
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 16,
+    elevation: 4,
+    shadowColor: '#B092FF',
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 3 },
+    flexDirection: 'row',
+    alignItems: 'center',
+    position: 'relative',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.8)',
+  },
+  statusIndicator: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    zIndex: 3,
+  },
+  leftSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  avatarContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    borderWidth: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#F8F9FF',
+    marginRight: 12,
+  },
+  basicInfo: {
+    flex: 1,
+  },
+  participantDepartment: {
+    fontSize: 13,
+    fontWeight: '600',
+    marginBottom: 6,
+  },
+  mbtiText: {
+    fontSize: 11,
+    fontWeight: '700',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    alignSelf: 'flex-start',
+    overflow: 'hidden',
+  },
+  rightSection: {
+    flex: 1,
+    paddingLeft: 16,
+  },
+  detailRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginBottom: 8,
+  },
+  detailItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  detailValue: {
+    fontSize: 11,
+    color: '#666',
+    marginLeft: 4,
+    fontWeight: '500',
+  },
+  interestsContainer: {
+    marginTop: 4,
+  },
+  interestsText: {
+    fontSize: 11,
+    color: '#666',
+    lineHeight: 16,
+  },
+  sideButton: {
+    width: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 2, height: 3 },
+    shadowOpacity: 0.5,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  // 버튼 컨테이너 및 버튼 스타일
+  buttonContainer: {
+    marginBottom: 20,
+    paddingHorizontal: 4,
+  },
+  applyButton: {
+    backgroundColor: '#434343',
+    borderRadius: 25,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#6846FF',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  applyButtonText: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: '700',
+    marginLeft: 8,
+    textShadowColor: 'rgba(0,0,0,0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+  fullButton: {
+    backgroundColor: '#F5F5F5',
+    borderRadius: 25,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+  },
+  fullButtonText: {
+    color: '#999',
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 8,
   },
 });
 
