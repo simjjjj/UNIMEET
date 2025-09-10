@@ -19,7 +19,7 @@ const Lounge: React.FC = () => {
   };
 
   const handleWritePress = () => {
-    alert('글쓰기 버튼 클릭!');
+    navigation.navigate('WritePost');
   };
 
   return (

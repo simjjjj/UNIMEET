@@ -117,8 +117,8 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: 'white',
     textAlign: 'center',
-    textShadowColor: '#000',
-    textShadowOffset: { width: 1, height: 2 },
+    textShadowColor: 'rgba(0,0,0,0.5)',
+    textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 4,
     elevation: 4, // Android
   },

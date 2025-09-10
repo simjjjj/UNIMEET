@@ -7,6 +7,7 @@ import Settings from '../Screens/Profile/Settings';
 import RoomDetail from '../Screens/Home/RoomDetail';
 import Lounge from '../Screens/Lounge/Lounge';
 import PostDetail from '../Screens/Lounge/PostDetail';
+import WritePost from '../Screens/Lounge/WritePost';
 import Chat from '../Screens/Chat/Chat';
 import ChatRoom from '../Screens/Chat/ChatRoom';
 import Login from '../Screens/Auth/Login';
@@ -41,6 +42,7 @@ export default function RootStack() {
           <Stack.Screen name="Settings" component={Settings} />
           <Stack.Screen name="Lounge" component={Lounge} />
           <Stack.Screen name="PostDetail" component={PostDetail} />
+          <Stack.Screen name="WritePost" component={WritePost} />
           <Stack.Screen name="Chat" component={Chat} />
           <Stack.Screen name="ChatRoom" component={ChatRoom} />
         </>

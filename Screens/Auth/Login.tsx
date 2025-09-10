@@ -225,9 +225,9 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: '#333',
     marginBottom: 6,
-    textShadowColor: 'rgba(255,255,255,0.8)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
+    textShadowColor: 'rgba(0,0,0,0.5)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
   },
   subtitle: {
     fontSize: 14,

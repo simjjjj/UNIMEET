@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     flex: 1,
     left: 10,
     color: 'white',
-    textShadowColor: '#000',
+    textShadowColor: 'rgba(0,0,0,0.5)',
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 4,
     elevation: 4, // Android
