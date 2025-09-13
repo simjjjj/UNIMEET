@@ -1,8 +1,0 @@
-.git
-.gitignore
-README.md
-.gradle
-build
-!build/libs/*.jar
-*.log
-.DS_Store 
