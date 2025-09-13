@@ -35,10 +35,15 @@ Thumbs.db
 *.log
 logs/
 
-# Environment variables
+# Environment variables (보안 중요)
 .env
 .env.local
 .env.production
+backend/.env.local
+
+# 개발 환경 설정 (보안 중요)
+backend/src/main/resources/application-local.yml
+backend/src/main/resources/application-prod.yml
 
 # Database
 *.db
@@ -79,3 +84,18 @@ private/
 
 # Kiro IDE
 .kiro/
+
+# Frontend (별도 관리)
+frontend/
+
+# 개발 스크립트 (로컬용)
+start-dev.bat
+start-dev.sh
+
+# 개인 설정 파일
+personal/
+private/
+
+# 빌드 결과물
+*.jar
+*.war

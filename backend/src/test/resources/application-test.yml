@@ -1,0 +1,19 @@
+spring:
+  data:
+    mongodb:
+      host: localhost
+      port: 0 # TestContainers will assign random port
+      database: unimeet_test
+  redis:
+    host: localhost
+    port: 6379
+  security:
+    jwt:
+      secret: test-secret-key-for-jwt-token-must-be-at-least-32-characters-long
+      expiration: 86400000
+
+logging:
+  level:
+    org.springframework.security: WARN
+    com.unimeet.backend: DEBUG
+    org.testcontainers: INFO
