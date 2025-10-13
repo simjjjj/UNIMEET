@@ -28,11 +28,14 @@ public class User implements UserDetails {
     private String department;       // 학과
     private String birth;           // 생년월일
     private String phone;           // 전화번호 (phoneNumber -> phone으로 변경)
+    private String gender;          // 성별 ("남" | "여")
     
     // 온보딩 프로필 정보 (선택사항)
     private String mbti;
     private List<String> interests;
     private String height;          // 키
+    private String prefer;          // 선호 설정 ("켜짐" | "꺼짐")
+    private String nonPrefer;       // 비선호 설정 ("켜짐" | "꺼짐")
     
     // 기존 필드들 (호환성 유지)
     private List<String> personalityKeywords;

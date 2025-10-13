@@ -37,10 +37,14 @@ public class SignUpRequest {
     @NotBlank(message = "전화번호는 필수입니다")
     private String phone;
     
+    private String gender;          // 성별 ("남" | "여") - 선택사항
+    
     // 온보딩 프로필 정보 (선택사항)
     private String mbti;
     private List<String> interests;
     private String height;
+    private String prefer;          // 선호 설정
+    private String nonPrefer;       // 비선호 설정
     
     // 기존 필드들 (호환성 유지)
     private List<String> personalityKeywords;

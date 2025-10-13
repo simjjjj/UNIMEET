@@ -41,11 +41,14 @@ public class UserService {
                 .department(request.getDepartment())
                 .birth(request.getBirth())
                 .phone(request.getPhone())
+                .gender(request.getGender())
                 
                 // 프로필 정보 (선택사항)
                 .mbti(request.getMbti())
                 .interests(request.getInterests())
                 .height(request.getHeight())
+                .prefer(request.getPrefer())
+                .nonPrefer(request.getNonPrefer())
                 
                 // 기존 필드들 (호환성 유지)
                 .personalityKeywords(request.getPersonalityKeywords())
@@ -100,6 +103,10 @@ public class UserService {
             user.setPhone(request.getPhone());
         }
         
+        if (StringUtils.hasText(request.getGender())) {
+            user.setGender(request.getGender());
+        }
+        
         if (StringUtils.hasText(request.getMbti())) {
             user.setMbti(request.getMbti());
         }
@@ -110,6 +117,14 @@ public class UserService {
         
         if (StringUtils.hasText(request.getHeight())) {
             user.setHeight(request.getHeight());
+        }
+        
+        if (StringUtils.hasText(request.getPrefer())) {
+            user.setPrefer(request.getPrefer());
+        }
+        
+        if (StringUtils.hasText(request.getNonPrefer())) {
+            user.setNonPrefer(request.getNonPrefer());
         }
         
         if (request.getPersonalityKeywords() != null) {
@@ -146,5 +161,25 @@ public class UserService {
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
+    }
+
+    /**
+     * 모든 사용자 조회 (매칭용)
+     */
+    @Transactional(readOnly = true)
+    public java.util.List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    /**
+     * 이메일 인증 상태 업데이트
+     */
+    @Transactional
+    public void updateEmailVerificationStatus(String email, boolean isVerified) {
+        User user = getUserByEmail(email);
+        user.setVerified(isVerified);
+        user.setUpdatedAt(LocalDateTime.now());
+        userRepository.save(user);
+        log.info("사용자 이메일 인증 상태 업데이트: {} -> {}", email, isVerified);
     }
 } 

@@ -64,8 +64,22 @@ public class EmailVerificationService {
             return false;
         }
         
-        if (!storedCode.equals(code)) {
-            log.warn("잘못된 인증 코드: {} (입력: {}, 저장: {})", email, code, storedCode);
+        // 숫자 값으로 비교 (앞의 0 무시)
+        try {
+            int inputCodeNum = Integer.parseInt(code);
+            int storedCodeNum = Integer.parseInt(storedCode);
+            
+            if (inputCodeNum != storedCodeNum) {
+                log.warn("잘못된 인증 코드: {} (입력: {} ({}), 저장: {} ({}))", 
+                        email, code, inputCodeNum, storedCode, storedCodeNum);
+                return false;
+            }
+            
+            log.info("인증 코드 매칭 성공: {} (입력: {} ({}), 저장: {} ({}))", 
+                    email, code, inputCodeNum, storedCode, storedCodeNum);
+                    
+        } catch (NumberFormatException e) {
+            log.warn("잘못된 인증 코드 형식: {} (입력: {}, 저장: {})", email, code, storedCode);
             return false;
         }
         

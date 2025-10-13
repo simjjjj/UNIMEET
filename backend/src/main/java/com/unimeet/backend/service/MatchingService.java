@@ -22,6 +22,8 @@ public class MatchingService {
     private final MatchRepository matchRepository;
     private final CompatibilityService compatibilityService;
     private final AIMatchingService aiMatchingService;
+    private final NotificationService notificationService;
+    private final UserService userService;
 
     /**
      * 사용자에게 매칭 후보들을 찾아서 반환 (페이지네이션)
@@ -201,5 +203,127 @@ public class MatchingService {
      */
     public List<Match> getAcceptedMatches(String userId) {
         return matchRepository.findByUserAIdOrUserBIdAndStatus(userId, userId, Match.MatchStatus.ACCEPTED);
+    }
+    
+    /**
+     * 매칭 요청 보내기 (알림 포함)
+     */
+    public Match sendMatchRequest(String requesterId, String targetId, String message) {
+        // 이미 요청이 있는지 확인
+        Optional<Match> existingMatch = matchRepository.findByRequesterIdAndTargetId(requesterId, targetId);
+        if (existingMatch.isPresent()) {
+            throw new RuntimeException("이미 매칭 요청을 보냈습니다");
+        }
+        
+        // 호환성 점수 계산
+        User requester = userRepository.findById(requesterId)
+                .orElseThrow(() -> new RuntimeException("Requester not found: " + requesterId));
+        User target = userRepository.findById(targetId)
+                .orElseThrow(() -> new RuntimeException("Target not found: " + targetId));
+        
+        double compatibilityScore = compatibilityService.calculateCompatibility(requester, target);
+        
+        Match match = Match.builder()
+                .requesterId(requesterId)
+                .targetId(targetId)
+                .compatibilityScore(compatibilityScore)
+                .message(message)
+                .status(Match.MatchStatus.PENDING)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+        
+        Match saved = matchRepository.save(match);
+        
+        // 알림 전송
+        notificationService.sendMatchRequestNotification(targetId, requester.getName(), saved.getId());
+        
+        log.info("매칭 요청: {} -> {}", requesterId, targetId);
+        return saved;
+    }
+    
+    /**
+     * 매칭 요청 수락 (알림 포함)
+     */
+    public Match acceptMatchRequest(String matchId, String userId) {
+        Match match = matchRepository.findById(matchId)
+                .orElseThrow(() -> new RuntimeException("Match not found: " + matchId));
+        
+        // 매칭 대상자만 수락할 수 있음
+        if (!match.getTargetId().equals(userId)) {
+            throw new RuntimeException("매칭 요청을 수락할 권한이 없습니다");
+        }
+        
+        // 이미 처리된 요청인지 확인
+        if (match.getStatus() != Match.MatchStatus.PENDING) {
+            throw new RuntimeException("이미 처리된 매칭 요청입니다");
+        }
+        
+        match.setStatus(Match.MatchStatus.ACCEPTED);
+        match.setUpdatedAt(LocalDateTime.now());
+        match.setRespondedAt(LocalDateTime.now());
+        
+        Match saved = matchRepository.save(match);
+        
+        // 알림 전송
+        User accepter = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found: " + userId));
+        notificationService.sendMatchAcceptedNotification(match.getRequesterId(), accepter.getName(), matchId);
+        
+        log.info("매칭 수락: {} accepted {}", userId, matchId);
+        return saved;
+    }
+    
+    /**
+     * 매칭 요청 거절 (알림 포함)
+     */
+    public Match rejectMatchRequest(String matchId, String userId) {
+        Match match = matchRepository.findById(matchId)
+                .orElseThrow(() -> new RuntimeException("Match not found: " + matchId));
+        
+        // 매칭 대상자만 거절할 수 있음
+        if (!match.getTargetId().equals(userId)) {
+            throw new RuntimeException("매칭 요청을 거절할 권한이 없습니다");
+        }
+        
+        // 이미 처리된 요청인지 확인
+        if (match.getStatus() != Match.MatchStatus.PENDING) {
+            throw new RuntimeException("이미 처리된 매칭 요청입니다");
+        }
+        
+        match.setStatus(Match.MatchStatus.REJECTED);
+        match.setUpdatedAt(LocalDateTime.now());
+        match.setRespondedAt(LocalDateTime.now());
+        
+        Match saved = matchRepository.save(match);
+        
+        // 알림 전송
+        User rejecter = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found: " + userId));
+        notificationService.sendMatchRejectedNotification(match.getRequesterId(), rejecter.getName(), matchId);
+        
+        log.info("매칭 거절: {} rejected {}", userId, matchId);
+        return saved;
+    }
+    
+    /**
+     * 받은 매칭 요청 목록
+     */
+    public List<Match> getReceivedMatches(String userId) {
+        return matchRepository.findByTargetIdOrderByCreatedAtDesc(userId);
+    }
+    
+    /**
+     * 보낸 매칭 요청 목록
+     */
+    public List<Match> getSentMatches(String userId) {
+        return matchRepository.findByRequesterIdOrderByCreatedAtDesc(userId);
+    }
+    
+    /**
+     * 수락된 매칭 목록 (새 버전)
+     */
+    public List<Match> getAcceptedMatchesList(String userId) {
+        return matchRepository.findByStatusAndUserIdOrderByRespondedAtDesc(Match.MatchStatus.ACCEPTED, userId);
     }
 }

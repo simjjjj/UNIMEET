@@ -34,6 +34,85 @@ public class MatchController {
     }
 
     /**
+     * AI 매칭 수행 (시연용)
+     */
+    @PostMapping("/find")
+    public ResponseEntity<?> findMatches(@RequestParam(defaultValue = "10") int limit) {
+        try {
+            String userId = getCurrentUserId();
+            User currentUser = userService.getUserById(userId);
+            
+            // 모든 다른 사용자들을 후보로 가져오기
+            List<User> allUsers = userService.getAllUsers();
+            List<User> candidates = allUsers.stream()
+                .filter(user -> !user.getId().equals(userId))
+                .filter(user -> user.isVerified())
+                .collect(java.util.stream.Collectors.toList());
+            
+            if (candidates.isEmpty()) {
+                return ResponseEntity.ok(Map.of(
+                    "message", "매칭 가능한 후보가 없습니다",
+                    "matches", List.of()
+                ));
+            }
+            
+            // 호환성 점수 계산 및 정렬
+            List<Map<String, Object>> matchResults = candidates.stream()
+                .map(candidate -> {
+                    double compatibilityScore = compatibilityService.calculateCompatibility(currentUser, candidate);
+                    Map<String, Double> detailedScores = compatibilityService.getDetailedCompatibilityScore(currentUser, candidate);
+                    
+                    Map<String, Object> result = new HashMap<>();
+                    result.put("userId", candidate.getId());
+                    result.put("name", candidate.getName());
+                    result.put("nickname", candidate.getNickname());
+                    result.put("department", candidate.getDepartment());
+                    result.put("studentId", candidate.getStudentId());
+                    result.put("gender", candidate.getGender() != null ? candidate.getGender() : "N/A");
+                    result.put("age", calculateAge(candidate.getBirth()));
+                    result.put("mbti", candidate.getMbti() != null ? candidate.getMbti() : "N/A");
+                    result.put("interests", candidate.getInterests() != null ? candidate.getInterests() : List.of());
+                    result.put("height", candidate.getHeight() != null ? candidate.getHeight() : "N/A");
+                    result.put("prefer", candidate.getPrefer());
+                    result.put("nonPrefer", candidate.getNonPrefer());
+                    result.put("compatibilityScore", compatibilityScore);
+                    result.put("detailedScores", detailedScores);
+                    
+                    // 공통 관심사 계산
+                    List<String> currentInterests = currentUser.getInterests() != null ? currentUser.getInterests() : List.of();
+                    List<String> candidateInterests = candidate.getInterests() != null ? candidate.getInterests() : List.of();
+                    List<String> commonInterests = currentInterests.stream()
+                        .filter(candidateInterests::contains)
+                        .collect(java.util.stream.Collectors.toList());
+                    result.put("commonInterests", commonInterests);
+                    
+                    return result;
+                })
+                .sorted((a, b) -> Double.compare((Double) b.get("compatibilityScore"), (Double) a.get("compatibilityScore")))
+                .limit(limit)
+                .collect(java.util.stream.Collectors.toList());
+            
+            return ResponseEntity.ok(Map.of(
+                "message", "AI 매칭 완료",
+                "requestUser", Map.of(
+                    "name", currentUser.getName(),
+                    "mbti", currentUser.getMbti() != null ? currentUser.getMbti() : "N/A",
+                    "department", currentUser.getDepartment(),
+                    "interests", currentUser.getInterests() != null ? currentUser.getInterests() : List.of()
+                ),
+                "totalCandidates", candidates.size(),
+                "matches", matchResults
+            ));
+            
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of(
+                "error", "매칭 처리 중 오류 발생",
+                "message", e.getMessage()
+            ));
+        }
+    }
+
+    /**
      * 매칭 요청 생성
      */
     @PostMapping("/request")
@@ -198,5 +277,25 @@ public class MatchController {
             return user.getId();
         }
         throw new RuntimeException("User not authenticated");
+    }
+    
+    /**
+     * 생년월일로부터 나이 계산
+     */
+    private int calculateAge(String birth) {
+        if (birth == null || birth.isEmpty()) {
+            return 0;
+        }
+        try {
+            String[] parts = birth.split("-");
+            if (parts.length >= 1) {
+                int birthYear = Integer.parseInt(parts[0]);
+                int currentYear = java.time.Year.now().getValue();
+                return currentYear - birthYear + 1; // 한국식 나이
+            }
+        } catch (Exception e) {
+            // 파싱 실패 시 0 반환
+        }
+        return 0;
     }
 }

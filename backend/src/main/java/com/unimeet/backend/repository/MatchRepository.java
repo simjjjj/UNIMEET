@@ -12,6 +12,7 @@ import java.util.Optional;
 
 @Repository
 public interface MatchRepository extends MongoRepository<Match, String> {
+    // 기존 매칭 시스템용
     List<Match> findByUserAIdOrUserBId(String userAId, String userBId);
     Page<Match> findByUserAIdOrUserBId(String userAId, String userBId, Pageable pageable);
     
@@ -26,4 +27,12 @@ public interface MatchRepository extends MongoRepository<Match, String> {
     
     @Query("{ $or: [ { 'userAId': ?0 }, { 'userBId': ?1 } ], 'status': ?2 }")
     Page<Match> findByUserAIdOrUserBIdAndStatus(String userAId, String userBId, Match.MatchStatus status, Pageable pageable);
+    
+    // 새 매칭 시스템용 (requesterId, targetId 기반)
+    Optional<Match> findByRequesterIdAndTargetId(String requesterId, String targetId);
+    List<Match> findByTargetIdOrderByCreatedAtDesc(String targetId);
+    List<Match> findByRequesterIdOrderByCreatedAtDesc(String requesterId);
+    
+    @Query("{'status': ?0, '$or': [{'requesterId': ?1}, {'targetId': ?1}]}")
+    List<Match> findByStatusAndUserIdOrderByRespondedAtDesc(Match.MatchStatus status, String userId);
 } 

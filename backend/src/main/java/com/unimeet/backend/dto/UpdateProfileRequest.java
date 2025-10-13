@@ -20,11 +20,14 @@ public class UpdateProfileRequest {
     private String department;
     private String birth;
     private String phone;
+    private String gender;
     
     // 프로필 정보
     private String mbti;
     private List<String> interests;
     private String height;
+    private String prefer;
+    private String nonPrefer;
     
     // 기존 필드들 (호환성 유지)
     private List<String> personalityKeywords;
