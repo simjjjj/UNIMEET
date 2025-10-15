@@ -28,7 +28,10 @@ public class EmailService {
      * 이메일 인증 코드 발송
      */
     public void sendVerificationEmail(String toEmail, String verificationCode) {
-        // 개발 환경에서는 실제 이메일 대신 콘솔에 출력
+        // Gmail 설정이 올바르게 되어 있는지 확인
+        log.info("Gmail 설정 확인 - fromEmail: {}", fromEmail);
+        
+        // 실제 Gmail 계정이 설정되어 있으면 이메일 발송 시도
         if (fromEmail == null || fromEmail.isEmpty() || fromEmail.equals("your-gmail@gmail.com")) {
             log.info("=== 개발용 이메일 인증 코드 ===");
             log.info("수신자: {}", toEmail);
