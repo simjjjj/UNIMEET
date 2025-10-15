@@ -102,12 +102,45 @@ class ChatRestController {
     }
 
     /**
-     * 사용자의 채팅방 목록 조회
+     * 내 채팅방 목록 조회 (JWT 인증 사용)
+     */
+    @GetMapping("/rooms")
+    public ResponseEntity<?> getMyChatRooms() {
+        try {
+            String userId = getCurrentUserId();
+            List<ChatRoom> chatRooms = chatService.getUserChatRooms(userId);
+            return ResponseEntity.ok(Map.of(
+                "message", "채팅방 목록",
+                "chatRooms", chatRooms
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of(
+                "error", "채팅방 목록 조회 실패",
+                "message", e.getMessage()
+            ));
+        }
+    }
+    
+    /**
+     * 사용자의 채팅방 목록 조회 (기존 호환성)
      */
     @GetMapping("/rooms/user/{userId}")
     public ResponseEntity<List<ChatRoom>> getUserChatRooms(@PathVariable String userId) {
         List<ChatRoom> chatRooms = chatService.getUserChatRooms(userId);
         return ResponseEntity.ok(chatRooms);
+    }
+    
+    /**
+     * 현재 로그인한 사용자 ID 조회
+     */
+    private String getCurrentUserId() {
+        org.springframework.security.core.Authentication authentication = 
+            org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof com.unimeet.backend.domain.User) {
+            com.unimeet.backend.domain.User user = (com.unimeet.backend.domain.User) authentication.getPrincipal();
+            return user.getId();
+        }
+        throw new RuntimeException("User not authenticated");
     }
 
     /**
