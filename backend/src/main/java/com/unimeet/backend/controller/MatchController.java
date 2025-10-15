@@ -113,50 +113,80 @@ public class MatchController {
     }
 
     /**
-     * 매칭 요청 생성
+     * 매칭 요청 보내기
      */
     @PostMapping("/request")
-    public ResponseEntity<?> createMatchRequest(@RequestBody Map<String, String> request) {
+    public ResponseEntity<?> sendMatchRequest(@RequestBody Map<String, Object> request) {
         try {
-            String currentUserId = getCurrentUserId();
-            String targetUserId = request.get("targetUserId");
+            String requesterId = getCurrentUserId();
+            String targetId = (String) request.get("targetId");
+            String message = (String) request.get("message");
             
-            if (targetUserId == null || targetUserId.isEmpty()) {
-                return ResponseEntity.badRequest().body("Target user ID is required");
+            if (targetId == null || targetId.equals(requesterId)) {
+                return ResponseEntity.badRequest().body(Map.of(
+                    "error", "잘못된 매칭 대상입니다"
+                ));
             }
             
-            Match match = matchingService.createMatch(currentUserId, targetUserId);
-            return ResponseEntity.ok(match);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            Match match = matchingService.sendMatchRequest(requesterId, targetId, message);
+            
+            return ResponseEntity.ok(Map.of(
+                "message", "매칭 요청을 보냈습니다",
+                "matchId", match.getId(),
+                "targetId", targetId
+            ));
+            
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of(
+                "error", "매칭 요청 실패",
+                "message", e.getMessage()
+            ));
         }
     }
 
     /**
-     * 매칭 수락
+     * 매칭 요청 수락
      */
     @PostMapping("/{matchId}/accept")
     public ResponseEntity<?> acceptMatch(@PathVariable String matchId) {
         try {
             String userId = getCurrentUserId();
-            Match match = matchingService.acceptMatch(matchId, userId);
-            return ResponseEntity.ok(match);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            Match match = matchingService.acceptMatchRequest(matchId, userId);
+            
+            return ResponseEntity.ok(Map.of(
+                "message", "매칭을 수락했습니다",
+                "matchId", matchId,
+                "status", match.getStatus()
+            ));
+            
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of(
+                "error", "매칭 수락 실패",
+                "message", e.getMessage()
+            ));
         }
     }
 
     /**
-     * 매칭 거절
+     * 매칭 요청 거절
      */
     @PostMapping("/{matchId}/reject")
     public ResponseEntity<?> rejectMatch(@PathVariable String matchId) {
         try {
             String userId = getCurrentUserId();
-            Match match = matchingService.rejectMatch(matchId, userId);
-            return ResponseEntity.ok(match);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            Match match = matchingService.rejectMatchRequest(matchId, userId);
+            
+            return ResponseEntity.ok(Map.of(
+                "message", "매칭을 거절했습니다",
+                "matchId", matchId,
+                "status", match.getStatus()
+            ));
+            
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of(
+                "error", "매칭 거절 실패",
+                "message", e.getMessage()
+            ));
         }
     }
 
@@ -185,13 +215,133 @@ public class MatchController {
     }
 
     /**
-     * 수락된 매칭 목록 조회
+     * 받은 매칭 요청 목록
+     */
+    @GetMapping("/received")
+    public ResponseEntity<?> getReceivedMatches() {
+        try {
+            String userId = getCurrentUserId();
+            List<Match> matches = matchingService.getReceivedMatches(userId);
+            
+            List<Map<String, Object>> result = matches.stream()
+                .map(match -> {
+                    User requester = userService.getUserById(match.getRequesterId());
+                    Map<String, Object> matchInfo = new HashMap<>();
+                    matchInfo.put("matchId", match.getId());
+                    matchInfo.put("requester", Map.of(
+                        "id", requester.getId(),
+                        "name", requester.getName(),
+                        "nickname", requester.getNickname(),
+                        "department", requester.getDepartment(),
+                        "mbti", requester.getMbti() != null ? requester.getMbti() : "N/A"
+                    ));
+                    matchInfo.put("message", match.getMessage());
+                    matchInfo.put("compatibilityScore", match.getCompatibilityScore());
+                    matchInfo.put("status", match.getStatus());
+                    matchInfo.put("createdAt", match.getCreatedAt());
+                    return matchInfo;
+                })
+                .collect(java.util.stream.Collectors.toList());
+            
+            return ResponseEntity.ok(Map.of(
+                "message", "받은 매칭 요청 목록",
+                "matches", result
+            ));
+            
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of(
+                "error", "매칭 목록 조회 실패",
+                "message", e.getMessage()
+            ));
+        }
+    }
+    
+    /**
+     * 보낸 매칭 요청 목록
+     */
+    @GetMapping("/sent")
+    public ResponseEntity<?> getSentMatches() {
+        try {
+            String userId = getCurrentUserId();
+            List<Match> matches = matchingService.getSentMatches(userId);
+            
+            List<Map<String, Object>> result = matches.stream()
+                .map(match -> {
+                    User target = userService.getUserById(match.getTargetId());
+                    Map<String, Object> matchInfo = new HashMap<>();
+                    matchInfo.put("matchId", match.getId());
+                    matchInfo.put("target", Map.of(
+                        "id", target.getId(),
+                        "name", target.getName(),
+                        "nickname", target.getNickname(),
+                        "department", target.getDepartment(),
+                        "mbti", target.getMbti() != null ? target.getMbti() : "N/A"
+                    ));
+                    matchInfo.put("message", match.getMessage());
+                    matchInfo.put("compatibilityScore", match.getCompatibilityScore());
+                    matchInfo.put("status", match.getStatus());
+                    matchInfo.put("createdAt", match.getCreatedAt());
+                    matchInfo.put("respondedAt", match.getRespondedAt());
+                    return matchInfo;
+                })
+                .collect(java.util.stream.Collectors.toList());
+            
+            return ResponseEntity.ok(Map.of(
+                "message", "보낸 매칭 요청 목록",
+                "matches", result
+            ));
+            
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of(
+                "error", "매칭 목록 조회 실패",
+                "message", e.getMessage()
+            ));
+        }
+    }
+    
+    /**
+     * 수락된 매칭 목록 (매칭된 사람들)
      */
     @GetMapping("/accepted")
-    public ResponseEntity<List<Match>> getAcceptedMatches() {
-        String userId = getCurrentUserId();
-        List<Match> matches = matchingService.getAcceptedMatches(userId);
-        return ResponseEntity.ok(matches);
+    public ResponseEntity<?> getAcceptedMatches() {
+        try {
+            String userId = getCurrentUserId();
+            List<Match> matches = matchingService.getAcceptedMatchesList(userId);
+            
+            List<Map<String, Object>> result = matches.stream()
+                .map(match -> {
+                    // 상대방 정보 가져오기
+                    String partnerId = match.getRequesterId().equals(userId) ? 
+                                     match.getTargetId() : match.getRequesterId();
+                    User partner = userService.getUserById(partnerId);
+                    
+                    Map<String, Object> matchInfo = new HashMap<>();
+                    matchInfo.put("matchId", match.getId());
+                    matchInfo.put("partner", Map.of(
+                        "id", partner.getId(),
+                        "name", partner.getName(),
+                        "nickname", partner.getNickname(),
+                        "department", partner.getDepartment(),
+                        "mbti", partner.getMbti() != null ? partner.getMbti() : "N/A",
+                        "interests", partner.getInterests() != null ? partner.getInterests() : List.of()
+                    ));
+                    matchInfo.put("compatibilityScore", match.getCompatibilityScore());
+                    matchInfo.put("matchedAt", match.getRespondedAt());
+                    return matchInfo;
+                })
+                .collect(java.util.stream.Collectors.toList());
+            
+            return ResponseEntity.ok(Map.of(
+                "message", "매칭된 사람들",
+                "matches", result
+            ));
+            
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of(
+                "error", "매칭 목록 조회 실패",
+                "message", e.getMessage()
+            ));
+        }
     }
 
     /**
