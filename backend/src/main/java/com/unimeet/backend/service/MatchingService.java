@@ -24,6 +24,7 @@ public class MatchingService {
     private final AIMatchingService aiMatchingService;
     private final NotificationService notificationService;
     private final UserService userService;
+    private final ChatService chatService;
 
     /**
      * 사용자에게 매칭 후보들을 찾아서 반환 (페이지네이션)

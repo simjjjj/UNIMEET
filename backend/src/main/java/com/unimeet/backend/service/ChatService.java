@@ -21,6 +21,13 @@ public class ChatService {
     private final ChatMessageRepository chatMessageRepository;
 
     /**
+     * 채팅방 생성 (매칭 수락 시 자동 생성용)
+     */
+    public ChatRoom createChatRoom(String userAId, String userBId) {
+        return getOrCreateChatRoom(userAId, userBId);
+    }
+
+    /**
      * 채팅방 생성 또는 조회
      */
     public ChatRoom getOrCreateChatRoom(String userAId, String userBId) {
